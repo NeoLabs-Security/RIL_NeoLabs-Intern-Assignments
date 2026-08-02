@@ -1,0 +1,64 @@
+name: Validate Grey-Box Toolkit
+
+on:
+  pull_request:
+  push:
+    branches: [main, codex/foundation-toolkit]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate Python and shell syntax
+        run: |
+          python -m py_compile scripts/validate_target.py
+          bash -n scripts/safe-nmap.sh
+
+      - name: Test exact-target guard
+        run: |
+          ROE_ACKNOWLEDGED=YES \
+          AUTHORIZED_TARGET_HOST=localhost \
+          AUTHORIZED_TARGET_SCHEME=https \
+          AUTHORIZED_TARGET_PORT=443 \
+          ASSIGNMENT_ID=ci-local-test \
+          python scripts/validate_target.py
+
+          if ROE_ACKNOWLEDGED=YES \
+             AUTHORIZED_TARGET_HOST='*' \
+             AUTHORIZED_TARGET_SCHEME=https \
+             AUTHORIZED_TARGET_PORT=443 \
+             ASSIGNMENT_ID=ci-invalid-test \
+             python scripts/validate_target.py; then
+            echo 'Wildcard target was incorrectly accepted.' >&2
+            exit 1
+          fi
+
+          if ROE_ACKNOWLEDGED=YES \
+             AUTHORIZED_TARGET_HOST=8.8.8.8 \
+             AUTHORIZED_TARGET_SCHEME=https \
+             AUTHORIZED_TARGET_PORT=443 \
+             ASSIGNMENT_ID=ci-invalid-ip \
+             python scripts/validate_target.py; then
+            echo 'Raw public IP target was incorrectly accepted.' >&2
+            exit 1
+          fi
+
+      - name: Check repository safety boundary
+        run: |
+          if grep -RInE --exclude-dir=.git 'BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY' .; then
+            echo 'Private key material must not be committed.' >&2
+            exit 1
+          fi
+          if find . -type f \( -name '*.burp' -o -name 'authorized-target.env' -o -name '*.pem' -o -name '*.key' \) -print | grep -q .; then
+            echo 'Live project, target or credential material is not allowed.' >&2
+            exit 1
+          fi
