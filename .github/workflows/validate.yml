@@ -18,10 +18,11 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Validate Python and shell syntax
+      - name: Validate Python, Node and shell syntax
         run: |
           python -m py_compile scripts/validate_target.py
           bash -n scripts/safe-nmap.sh
+          node --check labs/local-access-control/app/server.mjs
 
       - name: Test exact-target guard
         run: |
@@ -51,6 +52,16 @@ jobs:
             echo 'Raw public IP target was incorrectly accepted.' >&2
             exit 1
           fi
+
+      - name: Validate local practice target
+        run: |
+          docker compose -f labs/local-access-control/docker-compose.yml config -q
+          grep -F '127.0.0.1:8088:3000' labs/local-access-control/docker-compose.yml
+          if grep -RInE 'privileged:[[:space:]]*true|network_mode:[[:space:]]*host|cap_add:' labs/local-access-control; then
+            echo 'Local practice target requests an unsafe container capability.' >&2
+            exit 1
+          fi
+          docker build -q labs/local-access-control/app >/dev/null
 
       - name: Check repository safety boundary
         run: |
