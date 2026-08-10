@@ -1,102 +1,41 @@
-# NeoLabs × Renaissance Innovation Labs Cybersecurity Internship
+# NeoLabs Grey-Box Penetration Testing Intern Toolkit
 
-## Central Assignments Repository
+The **NeoLabs Grey-Box Penetration Testing Intern Toolkit** is the shared learning, practice and technical enablement repository for authorised web application and API security testing through the VCC Security Lab.
 
-This repository is the **official graded work record** for the NeoLabs × Renaissance Innovation Labs (RIL) Cybersecurity Internship. Student learning/runtime tooling lives in the three track repositories; assignments, evidence, mentor feedback, revisions and final submissions live here.
+It contains NeoLabs-branded learning materials, safe tool configurations, synthetic practice applications, testing checklists, evidence templates and reporting resources. Official weekly assignments, live pod addresses, credentials, mentor ground truth and student submissions belong in the restricted central assignments workflow—not here.
 
-> ## CURRENT WEEK — WEEK 01
-> **Operation Night Watch** is the active assignment. Start at [`assignments/week-01/README.md`](assignments/week-01/README.md), then open only your assigned track brief.
+## Start here
 
-For the current cross-repository setup/runtime model, read [`PROGRAMME_CURRENT_STATE.md`](PROGRAMME_CURRENT_STATE.md).
+1. Read `RULES_OF_ENGAGEMENT.md`.
+2. Follow `LEARNING_PATH.md`.
+3. Use `docs/README.md` as the complete documentation index.
+4. Practise first with `labs/local-access-control/` and run its smoke test before relying on the lab.
+5. Use the scope validator, safe Burp workflow, approved restricted discovery helper and reporting templates during assigned work.
+6. Treat the exact target issued in the assignment as the only authorised target.
 
-## Tracks
+## Version 1 contents
 
-- **SOC Analyst Level 1** — Wazuh monitoring, log analysis, alert investigation, incident triage, timelines, reporting and detection improvement.
-- **Grey-Box Penetration Testing** — authorised application/service mapping, scoped testing, vulnerability validation, reporting and retesting.
-- **IT Security Support** — secure support, identity/network/service diagnosis, evidence preservation, containment/recovery and documentation.
+- professional scope, Rules of Engagement, stop conditions and proof thresholds;
+- HTTP, browser, proxy and API foundations;
+- Burp Suite Community workflow and exact-scope guidance;
+- application mapping and grey-box methodology;
+- authentication, session and authorisation testing;
+- input validation, business logic and API security;
+- restricted low-rate discovery and exact-target validation;
+- evidence, finding, pentest and retest templates;
+- interactive localhost-only synthetic practice application with a student-runnable smoke test;
+- troubleshooting and capstone material;
+- repository safety checks that reject credentials, live target material and unsafe container settings.
 
-## Week 1 start sequence
+## Safety boundary
 
-1. Open [`assignments/week-01/README.md`](assignments/week-01/README.md) and your assigned track brief.
-2. Clone/pull the latest version of your track toolkit.
-3. Follow the toolkit's current platform launcher instead of reconstructing setup from internal helper scripts.
-4. Authenticate only with your assigned pod number + private NeoLabs Access Code.
-5. Confirm the server-issued pod/track/runtime state before collecting evidence.
-6. Create the required Week 1 branch and submission folder.
-7. Never commit Access Codes, session tokens, signed URLs, certificates, private keys, passwords or unrelated pod data.
+- Test only the exact target assigned in writing by NeoLabs.
+- Never scan public networks, neighbouring pods or infrastructure not listed in the Rules of Engagement.
+- Stop when the approved proof threshold is reached; do not establish persistence, exfiltrate data or disrupt service.
+- Use synthetic accounts and data only.
+- Never commit credentials, tokens, private URLs, Burp project files containing live traffic or unredacted evidence.
+- A local change to a target label must never grant access to another VCC pod.
 
-### Current startup entry points
+## Release status
 
-**SOC Windows:** double-click `START-NEOLABS-SOC.cmd`. The same file also provides `doctor`, `status` and `login` actions, for example `START-NEOLABS-SOC.cmd doctor`.
-
-**SOC Linux/Ubuntu:** from the SOC toolkit root run `bash start-neolabs-soc.sh`; after first-run permission normalisation, `./start-neolabs-soc.sh` is the normal command. Diagnostics use `./start-neolabs-soc.sh doctor`.
-
-The SOC launcher does not report READY until assigned-pod VCC telemetry is actually searchable in the local Wazuh indexer. Students should not manually choose among low-level Wazuh/Docker/setup scripts.
-
-**Pentest Windows:** run `setup-windows.cmd` once, then `.\neolabs.cmd login`, `status`, `pod info`, `scope`, `targets`, and `connect` from the toolkit folder.
-
-**Support Windows:** run `setup-windows.cmd` once, then `.\neolabs.cmd login`, `status`, `pod info`, `targets`, and `connect` from the toolkit folder.
-
-Do not use old instructions that require a global CLI, a manually entered gateway URL, or bare `neolabs` on Windows.
-
-## Official submission workflow
-
-1. Read the current assignment scope, safety boundaries, deliverables and deadline.
-2. Create a branch using the required naming convention.
-3. Complete only the authorised practical work and collect only authorised evidence.
-4. Redact private information before committing.
-5. Push your branch and open a Pull Request.
-6. Link the assigned Issue when one has been provided.
-7. Respond to mentor feedback on the same branch.
-8. Do not merge your own PR unless a mentor explicitly instructs you to do so.
-
-## Branch naming
-
-`week-XX/<track>/<github-username>-<short-task-name>`
-
-Examples:
-
-- `week-01/soc/alex-night-watch`
-- `week-01/pentest/alex-night-watch`
-- `week-01/support/alex-night-watch`
-
-## Submission path
-
-`submissions/week-XX/<track>/<github-username>/`
-
-## Evidence rules
-
-Acceptable evidence includes redacted screenshots, approved log excerpts, Wazuh event/rule IDs, authorised request/response observations, approved command output, timelines, ticket notes and retest evidence.
-
-Never submit passwords, NeoLabs Access Codes, AWS keys, API/session tokens, signed private URLs, SSH private keys, certificates/private keys, real customer data, production secrets or unrelated third-party information.
-
-## Scope and safety
-
-All testing must remain inside the written assignment scope and the NeoLabs/RIL controlled lab. The production VCC training topology is five isolated pods (`pod-01` through `pod-05`). Students do not receive EC2 shell access, broad AWS credentials, database/container access, mentor ground truth or cross-pod access.
-
-The server-issued pod/track/resources plus the written assignment are authoritative. Never reuse a cached/old IP when the current manifest no longer returns it.
-
-## Programme scenarios
-
-| Week | Scenario | Runtime class |
-|---|---|---|
-| 01 | Operation Night Watch | HYBRID |
-| 02 | The Ghost Login | HYBRID |
-| 03 | Credential Storm | LIVE_REQUIRED |
-| 04 | The Broken Gate | HYBRID |
-| 05 | Operation Poisoned Upload | HYBRID |
-| 06 | Web Breach | LIVE_REQUIRED |
-| 07 | Cloud Locker | STORAGE_NATIVE |
-| 08 | S3 Insider Trail | STORAGE_NATIVE |
-| 09 | Data Escape | STORAGE_NATIVE |
-| 10 | Hidden Endpoint | HYBRID |
-| 11 | Developer Ransomware Drill | ENDPOINT_LIVE |
-| 12 | Blackout at VCC | CAPSTONE |
-
-Later-week material may exist in the repositories before release. Presence of a file is not authorisation to run that scenario.
-
-## Communication
-
-- **GitHub:** official assignments, submissions, evidence and mentor review.
-- **Slack:** working discussions and mentor support.
-- **WhatsApp:** urgent reminders/timetable notices only.
+The Version 1 student toolkit is on `main` and is ready for onboarding, local practice and supervised VCC assessments. Live VCC work still requires an operator-issued assignment, exact target, synthetic account, testing window and approved scope.
