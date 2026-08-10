@@ -34,10 +34,13 @@ const page = `<!doctype html>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>NeoLabs Local Access-Control Lab</title>
   <style>
-    body{font-family:system-ui,sans-serif;max-width:820px;margin:40px auto;padding:0 20px;line-height:1.5}
-    button,select,input{font:inherit;padding:8px;margin:4px}
-    pre{background:#111827;color:#e5e7eb;padding:16px;border-radius:8px;overflow:auto}
+    body{font-family:system-ui,sans-serif;max-width:820px;margin:40px auto;padding:0 20px;line-height:1.5;background:#f8fafc;color:#0f172a}
+    button,select,input{font:inherit;padding:9px;margin:4px;border-radius:6px;border:1px solid #94a3b8}
+    button{cursor:pointer;background:#0f766e;color:white;border-color:#0f766e}
+    button:hover{filter:brightness(.95)}
+    pre{background:#111827;color:#e5e7eb;padding:16px;border-radius:8px;overflow:auto;min-height:130px}
     .note{background:#eef6ff;border-left:4px solid #0f766e;padding:12px}
+    .status{font-size:.9rem;color:#475569;margin-top:10px}
   </style>
 </head>
 <body>
@@ -50,21 +53,35 @@ const page = `<!doctype html>
     </select>
   </label>
   <div>
-    <button id="mine">My orders</button>
+    <button id="mine" type="button">My orders</button>
     <input id="order" value="order-101" aria-label="Order identifier">
-    <button id="one">Get order by ID</button>
+    <button id="one" type="button">Get order by ID</button>
   </div>
+  <div id="status" class="status">Ready. Start with “My orders”.</div>
   <pre id="output">Use the normal workflow first.</pre>
   <script>
     const output = document.getElementById('output');
+    const status = document.getElementById('status');
     const user = document.getElementById('user');
+
     async function call(path) {
-      const response = await fetch(path, { headers: { 'x-demo-user': user.value } });
-      const body = await response.json();
-      output.textContent = response.status + '\n' + JSON.stringify(body, null, 2);
+      status.textContent = 'Requesting ' + path + ' as ' + user.value + '…';
+      try {
+        const response = await fetch(path, { headers: { 'x-demo-user': user.value } });
+        const body = await response.json();
+        output.textContent = response.status + '\\n' + JSON.stringify(body, null, 2);
+        status.textContent = 'Completed. Review the request and response in Burp or browser developer tools.';
+      } catch (error) {
+        output.textContent = 'Request failed.\\n' + String(error);
+        status.textContent = 'The browser could not complete the request. Check Docker health and the README troubleshooting section.';
+      }
     }
-    document.getElementById('mine').onclick = () => call('/api/my-orders');
-    document.getElementById('one').onclick = () => call('/api/orders/' + encodeURIComponent(document.getElementById('order').value));
+
+    document.getElementById('mine').addEventListener('click', () => call('/api/my-orders'));
+    document.getElementById('one').addEventListener('click', () => {
+      const orderId = document.getElementById('order').value.trim();
+      call('/api/orders/' + encodeURIComponent(orderId));
+    });
   </script>
 </body>
 </html>`;
