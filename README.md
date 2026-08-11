@@ -4,6 +4,14 @@ The **NeoLabs × RIL Grey-Box Pentest Toolkit** is the student-side **Learn + Co
 
 It contains NeoLabs-branded learning material, safe tool configuration, synthetic practice applications, evidence/reporting templates and the NeoLabs pod-access client. Official weekly assignments and graded submissions belong in the separate central assignments repository.
 
+## Current week
+
+**Week 02 — The Ghost Login**
+
+- Learning source: `docs/week-02/ghost-login-learning-pack.md`
+- Branded PDF: `publications/NeoLabs_GreyBox_Pentest_Week_02_Ghost_Login.pdf`
+- Practical task: issued through `RIL_NeoLabs-Intern-Assignments`
+
 ## Student flow
 
 1. Read `START_HERE.md`, `RULES_OF_ENGAGEMENT.md` and `LEARNING_PATH.md`.
@@ -27,7 +35,7 @@ bash scripts/safe-nmap.sh <returned-hostname-ip-or-cidr>
 
 ## Why target IPs are not committed here
 
-Pentest interns need real lab IPs and sometimes a small CIDR to learn host/service discovery correctly. Those values are therefore returned **at runtime** by the NeoLabs broker and written to ignored `runtime/access-manifest.json`.
+Pentest interns need real lab IPs and sometimes a CIDR to learn host/service discovery correctly. Those values are therefore returned **at runtime** by the NeoLabs broker and written to ignored `runtime/access-manifest.json`.
 
 A rebuilt pod can receive a different IP without requiring a repo edit or a new manual target file. `neolabs connect` refreshes it.
 
@@ -63,4 +71,4 @@ The safe Nmap validator accepts an exact server-returned hostname/IP, an IP insi
 
 ## Release status
 
-The toolkit on `main` contains the broker client and manifest-bound discovery helpers. Live VCC work still depends on the broker being deployed/enabled and the current pod/scenario resources being published by the operator pipeline.
+The toolkit on `main` contains the broker client, manifest-bound discovery helpers and the current branded Week 2 learning pack. Live VCC work still depends on the broker being deployed/enabled and the current pod/scenario resources being published by the operator pipeline.
