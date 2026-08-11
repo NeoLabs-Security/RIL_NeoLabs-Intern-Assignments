@@ -14,15 +14,15 @@ It contains NeoLabs-branded learning material, safe tool configuration, syntheti
 
 ## Student flow
 
-1. Read `START_HERE.md`, `RULES_OF_ENGAGEMENT.md` and `LEARNING_PATH.md`.
+1. Read `START_HERE.md`, `RULES_OF_ENGAGEMENT.md` and `LEARNING_PATH.md`, then install the repo CLI once with `python3 -m pip install --user -e .`.
 2. Receive your pod number and private NeoLabs Access Code.
 3. Authenticate and refresh the current server-authorised scope:
 
 ```bash
-python3 tools/neolabs.py login
-python3 tools/neolabs.py connect
-python3 tools/neolabs.py scope
-python3 tools/neolabs.py targets
+neolabs login
+neolabs connect
+neolabs scope
+neolabs targets
 ```
 
 4. Use the returned hostname/IP/CIDR only. For Nmap, use the fixed wrapper:
@@ -71,4 +71,4 @@ The safe Nmap validator accepts an exact server-returned hostname/IP, an IP insi
 
 ## Release status
 
-The toolkit on `main` contains the broker client, manifest-bound discovery helpers and the current branded Week 2 learning pack. Live VCC work still depends on the broker being deployed/enabled and the current pod/scenario resources being published by the operator pipeline.
+The toolkit on `main` contains the installable broker client, manifest-bound discovery helpers and the current branded Week 2 learning pack. Live VCC work still depends on the broker being deployed/enabled and the current pod/scenario resources being published by the operator pipeline.
