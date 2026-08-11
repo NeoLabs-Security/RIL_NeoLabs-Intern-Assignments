@@ -1,40 +1,68 @@
 # Start Here — Grey-Box Penetration Testing
 
-## Purpose
+This repository is the **NeoLabs × RIL Grey-Box Pentest Toolkit**. It provides branded learning material, safe testing helpers and the student-side client that authenticates you to the VCC pod assigned by the programme.
 
-This toolkit teaches interns to plan, conduct, document and communicate authorised web application and API security assessments. It is not a general-purpose attack toolkit.
+Official weekly tasks and graded submissions belong in the separate **RIL_NeoLabs-Intern-Assignments** repository.
 
 ## Before any practical work
 
 1. Read `RULES_OF_ENGAGEMENT.md`.
-2. Confirm the written assignment identifies your exact target, testing window, accounts, permitted techniques and stop conditions.
-3. Configure Burp Suite to include only the assigned target and drop out-of-scope requests.
-4. Store evidence in the approved case folder; never commit live traffic or credentials.
-5. Use the repository scripts only after setting the exact operator-issued target.
+2. Set the NeoLabs lab base URL supplied by the programme as `NEOLABS_LAB_BASE_URL`.
+3. Use the private pod number + NeoLabs Access Code delivered for the week.
+4. Authenticate and refresh your scope:
+
+```bash
+python3 tools/neolabs.py login
+python3 tools/neolabs.py connect
+python3 tools/neolabs.py scope
+python3 tools/neolabs.py targets
+```
+
+The base URL is the **authentication/discovery entry point**. It is not necessarily the pentest target.
+
+## Why the toolkit now shows real IPs
+
+Pentest training sometimes requires actual IP/CIDR work for Nmap and service discovery. The broker therefore returns the exact lab targets that your pod is authorised to test. For example, a week may expose one IP, several named services or a small `/28` lab range.
+
+The student cannot select a different pod by editing a local file. The current manifest is server-issued and stored only in the ignored `runtime/` directory.
+
+## Safe Nmap workflow
+
+Always read scope first:
+
+```bash
+python3 tools/neolabs.py scope
+python3 tools/neolabs.py targets
+```
+
+Then use the fixed wrapper with **one** returned target:
+
+```bash
+bash scripts/safe-nmap.sh 10.40.3.21
+```
+
+or, only when `neolabs scope` explicitly returns the range:
+
+```bash
+bash scripts/safe-nmap.sh 10.40.3.16/28
+```
+
+The validator rejects IPs/CIDRs/hostnames outside the live server-issued manifest and the wrapper does not accept arbitrary Nmap flags.
+
+## Burp/browser work
+
+Configure Burp Suite and browser tooling only for the hostnames/URLs returned by `neolabs targets` and the limits written in the current GitHub assignment.
 
 ## Learning order
 
-Follow `LEARNING_PATH.md`. Begin with scope, HTTP and evidence quality before vulnerability testing.
+Follow `LEARNING_PATH.md`: scope and HTTP first, then proxy workflow, mapping, identity/session testing, authorization, validation/business logic, API security, evidence and retesting.
 
 ## Repository boundary
 
-This public repository contains shared learning resources and safe tooling. It must not contain:
+This public repository may contain reusable tools, synthetic labs, templates and NeoLabs-branded learning material. It must not contain live Access Codes, private keys, raw session files, unredacted cohort evidence, mentor answer keys or production data.
 
-- live VCC pod addresses;
-- student or mentor credentials;
-- private keys or access tokens;
-- real user information;
-- mentor answer keys;
-- active assignment details;
-- Burp project files containing live traffic.
+The `runtime/` folder is ignored because it is generated from the live broker.
 
 ## Stop and escalate
 
-Stop testing and notify the mentor when:
-
-- the application becomes unstable;
-- another pod or unassigned system appears reachable;
-- real personal data is exposed;
-- a technique would require persistence, destructive action or broad automation;
-- the evidence already proves the approved finding;
-- the Rules of Engagement are unclear.
+Stop testing and notify a mentor when the application becomes unstable, a non-returned system appears reachable, real personal data appears, the task would require persistence/destructive action, the approved proof threshold is already met or the written Rules of Engagement are unclear.
