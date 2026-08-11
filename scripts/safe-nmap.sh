@@ -2,36 +2,44 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CONFIG_FILE="${1:-$ROOT_DIR/tools/authorized-target.env}"
+TARGET="${1:-}"
 
-if [[ ! -f "$CONFIG_FILE" ]]; then
-  echo "Missing target configuration: $CONFIG_FILE" >&2
-  echo "Copy tools/authorized-target.example.env to an ignored local authorized-target.env file." >&2
+if [[ -z "$TARGET" || $# -ne 1 ]]; then
+  echo "Usage: $0 <exact-hostname|ip|approved-cidr>" >&2
+  echo "Run: python3 tools/neolabs.py scope && python3 tools/neolabs.py targets" >&2
   exit 2
 fi
 
-set -a
-# shellcheck disable=SC1090
-source "$CONFIG_FILE"
-set +a
-
-python3 "$ROOT_DIR/scripts/validate_target.py"
+python3 "$ROOT_DIR/scripts/validate_target.py" "$TARGET"
 
 if ! command -v nmap >/dev/null 2>&1; then
   echo "nmap is not installed." >&2
   exit 2
 fi
 
-OUTPUT_DIR="$ROOT_DIR/evidence/${ASSIGNMENT_ID}/discovery"
+if [[ ! -f "$ROOT_DIR/runtime/access-manifest.json" ]]; then
+  echo "Missing live NeoLabs access manifest. Run neolabs connect first." >&2
+  exit 2
+fi
+
+POD_ID="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["pod_id"])' "$ROOT_DIR/runtime/access-manifest.json")"
+SCENARIO_ID="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8")).get("scenario_id") or "unassigned")' "$ROOT_DIR/runtime/access-manifest.json")"
+SAFE_SCENARIO="$(printf '%s' "$SCENARIO_ID" | tr -cd 'A-Za-z0-9._-')"
+OUTPUT_DIR="$ROOT_DIR/evidence/${SAFE_SCENARIO}/${POD_ID}/discovery"
 mkdir -p "$OUTPUT_DIR"
-chmod 700 "$ROOT_DIR/evidence" "$ROOT_DIR/evidence/${ASSIGNMENT_ID}" "$OUTPUT_DIR" 2>/dev/null || true
+chmod 700 "$ROOT_DIR/evidence" "$ROOT_DIR/evidence/${SAFE_SCENARIO}" "$ROOT_DIR/evidence/${SAFE_SCENARIO}/${POD_ID}" "$OUTPUT_DIR" 2>/dev/null || true
 
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 OUTPUT_BASE="$OUTPUT_DIR/nmap-${STAMP}"
 
 cat <<NOTICE
-Running the fixed NeoLabs low-rate discovery profile against one validated hostname.
-No user-supplied Nmap flags, ranges or additional targets are accepted.
+NeoLabs approved discovery profile
+Pod: $POD_ID
+Scenario: $SCENARIO_ID
+Target: $TARGET
+
+The target has been checked against the current server-issued manifest.
+No user-supplied Nmap flags or additional targets are accepted by this wrapper.
 NOTICE
 
 nmap \
@@ -44,6 +52,6 @@ nmap \
   --top-ports 100 \
   -Pn \
   -oA "$OUTPUT_BASE" \
-  -- "$AUTHORIZED_TARGET_HOST"
+  -- "$TARGET"
 
 echo "Results saved under: $OUTPUT_DIR"
