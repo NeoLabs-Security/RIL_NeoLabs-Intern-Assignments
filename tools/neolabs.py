@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """NeoLabs Grey-Box Pentest pod access client.
 
-The broker, not the learner, is authoritative for pod, target IPs and allowed CIDRs.
-The current server manifest is written to runtime/access-manifest.json for safe tools.
+The always-available NeoLabs gateway is authoritative for pod, scenario, runtime
+state, target IPs and allowed CIDRs. Interactive targets are exposed to safe tools
+only while an approved LIVE, CLOUD_LIVE or ENDPOINT_LIVE surface exists. During
+REPLAY/OFFLINE windows stale network targets are removed from the local runtime
+manifest so the Nmap guard continues to fail closed.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import getpass
 import json
 import os
@@ -23,12 +27,15 @@ from typing import Any
 
 TRACK = "PENTEST"
 POD_RE = re.compile(r"^pod-[0-9]{2}$")
+INTERACTIVE_STATES = {"LIVE", "CLOUD_LIVE", "ENDPOINT_LIVE"}
 ROOT = Path(__file__).resolve().parents[1]
 RUNTIME_DIR = ROOT / "runtime"
 RUNTIME_MANIFEST = RUNTIME_DIR / "access-manifest.json"
+EVIDENCE_DIR = RUNTIME_DIR / "evidence"
 HOME_STATE = Path.home() / ".neolabs" / "pentest"
 SESSION_FILE = HOME_STATE / "session.json"
 INSTALLATION_FILE = HOME_STATE / "installation-id"
+MAX_DOWNLOAD_BYTES = 25 * 1024 * 1024
 
 
 def fail(message: str) -> "NoReturn":
@@ -72,19 +79,20 @@ def validate_base_url(value: str) -> str:
 
 
 def ssl_context() -> ssl.SSLContext:
+    context = ssl.create_default_context()
     ca_file = os.environ.get("NEOLABS_CA_FILE", "").strip()
     if ca_file:
         path = Path(ca_file).expanduser()
         if not path.is_file():
             fail(f"NEOLABS_CA_FILE does not exist: {path}")
-        return ssl.create_default_context(cafile=str(path))
-    return ssl.create_default_context()
+        context.load_verify_locations(cafile=str(path))
+    return context
 
 
 def request_json(base_url: str, path: str, *, method: str = "GET", payload: dict[str, Any] | None = None, token: str | None = None) -> dict[str, Any]:
     endpoint = urllib.parse.urljoin(base_url.rstrip("/") + "/", path.lstrip("/"))
     data = None if payload is None else json.dumps(payload).encode("utf-8")
-    headers = {"Accept": "application/json", "User-Agent": "NeoLabs-Pentest-Toolkit/1.0"}
+    headers = {"Accept": "application/json", "User-Agent": "NeoLabs-Pentest-Toolkit/1.1"}
     if data is not None:
         headers["Content-Type"] = "application/json"
     if token:
@@ -111,6 +119,20 @@ def request_json(base_url: str, path: str, *, method: str = "GET", payload: dict
     if not isinstance(result, dict):
         fail("lab access response must be a JSON object")
     return result
+
+
+def download_bytes(url: str) -> bytes:
+    parsed = urllib.parse.urlsplit(url)
+    if parsed.scheme != "https" or not parsed.netloc or parsed.username or parsed.password:
+        fail("replay gateway returned an invalid evidence URL")
+    try:
+        with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "NeoLabs-Pentest-Evidence/1.1"}), context=ssl_context(), timeout=45) as response:
+            body = response.read(MAX_DOWNLOAD_BYTES + 1)
+    except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, ssl.SSLError):
+        fail("could not download an authorised evidence object")
+    if len(body) > MAX_DOWNLOAD_BYTES:
+        fail("evidence object exceeded the allowed download size")
+    return body
 
 
 def installation_id() -> str:
@@ -147,9 +169,23 @@ def manifest_from(value: dict[str, Any]) -> dict[str, Any]:
     return manifest
 
 
+def safe_runtime_manifest(manifest: dict[str, Any]) -> dict[str, Any]:
+    copy = json.loads(json.dumps(manifest))
+    state = str(copy.get("lab_state") or "LIVE")
+    resources = copy.get("resources")
+    if not isinstance(resources, dict):
+        resources = {}
+        copy["resources"] = resources
+    if state not in INTERACTIVE_STATES:
+        resources["targets"] = []
+        resources["allowed_cidrs"] = []
+        resources["prohibited"] = ["No interactive Pentest surface is active in the current NeoLabs runtime state."]
+    return copy
+
+
 def save_runtime(manifest: dict[str, Any]) -> None:
     RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
-    atomic_write(RUNTIME_MANIFEST, json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    atomic_write(RUNTIME_MANIFEST, json.dumps(safe_runtime_manifest(manifest), indent=2, sort_keys=True) + "\n")
 
 
 def refresh(session: dict[str, Any]) -> dict[str, Any]:
@@ -181,24 +217,34 @@ def login(args: argparse.Namespace) -> None:
     print("✓ Authentication successful")
     print(f"✓ Assigned pod: {manifest['pod_id']}")
     print("✓ Track: Grey-Box Penetration Testing")
-    print("Next: run `neolabs connect`, then `neolabs scope` and `neolabs targets`.")
+    print(f"✓ Lab state: {manifest.get('lab_state', 'LIVE')}")
+    print("Next: run `neolabs connect`, then `neolabs scope` and `neolabs targets` when an interactive surface is active.")
 
 
 def connect(_: argparse.Namespace) -> None:
     manifest = refresh(read_session())
+    state = str(manifest.get("lab_state") or "LIVE")
+    if state not in INTERACTIVE_STATES:
+        print(f"NeoLabs state: {state}. No interactive Pentest target is active right now.")
+        print("The local scan manifest has been cleared of target IPs/CIDRs. Use `neolabs evidence` for approved offline material or return during the scheduled live window.")
+        return
     resources = manifest["resources"]
     cidrs = resources.get("allowed_cidrs", [])
     targets = resources.get("targets", [])
-    print(f"✓ Connected context refreshed for {manifest['pod_id']}.")
+    print(f"✓ {state} context refreshed for {manifest['pod_id']}.")
     print(f"✓ {len(cidrs) if isinstance(cidrs, list) else 0} authorised CIDR(s); {len(targets) if isinstance(targets, list) else 0} target(s).")
-    print("The manifest is authoritative. Run `neolabs scope` before Nmap.")
+    if state == "CLOUD_LIVE":
+        print("This is a storage/cloud-native exercise. Use only the cloud resources published for the current scenario; Nmap may have no authorised network scope.")
+    else:
+        print("The manifest is authoritative. Run `neolabs scope` before Nmap.")
 
 
 def status(_: argparse.Namespace) -> None:
     session = read_session()
     manifest = refresh(session)
     print("NEOLABS SECURITY LAB")
-    print("Status:   ONLINE SESSION")
+    print(f"State:    {manifest.get('lab_state') or 'LIVE'}")
+    print(f"Mode:     {manifest.get('runtime_mode') or 'live-control-plane'}")
     print(f"Track:    {manifest['track']}")
     print(f"Pod:      {manifest['pod_id']}")
     print(f"Scenario: {manifest.get('scenario_id') or 'not published'}")
@@ -211,13 +257,19 @@ def pod_info(_: argparse.Namespace) -> None:
     print(f"Pod:      {manifest['pod_id']}")
     print(f"Track:    {manifest['track']}")
     print(f"Scenario: {manifest.get('scenario_id') or 'not published'}")
+    print(f"State:    {manifest.get('lab_state') or 'LIVE'}")
     print("The pod is assigned server-side and cannot be changed from this client.")
 
 
 def scope(_: argparse.Namespace) -> None:
     manifest = refresh(read_session())
-    resources = manifest["resources"]
+    state = str(manifest.get("lab_state") or "LIVE")
     print(f"Authorised pod: {manifest['pod_id']}")
+    if state not in INTERACTIVE_STATES:
+        print(f"Interactive scope: NONE ({state}).")
+        print("Safe Nmap validation is intentionally closed until an authorised live surface is published.")
+        return
+    resources = manifest["resources"]
     print("Allowed CIDRs:")
     cidrs = resources.get("allowed_cidrs", [])
     if isinstance(cidrs, list) and cidrs:
@@ -240,8 +292,9 @@ def target_line(target: Any) -> str:
     label = str(target.get("label", "target"))
     host = target.get("hostname")
     ip = target.get("ip")
+    url = target.get("url")
     ports = target.get("ports")
-    address = " / ".join(str(v) for v in (host, ip) if v)
+    address = " / ".join(str(v) for v in (url, host, ip) if v)
     port_text = ""
     if isinstance(ports, list):
         port_text = " ports=" + ",".join(str(p) for p in ports)
@@ -250,13 +303,48 @@ def target_line(target: Any) -> str:
 
 def targets(_: argparse.Namespace) -> None:
     manifest = refresh(read_session())
-    values = manifest["resources"].get("targets", [])
+    state = str(manifest.get("lab_state") or "LIVE")
     print("AUTHORISED PENTEST TARGETS")
+    if state not in INTERACTIVE_STATES:
+        print(f"  - none: current lab state is {state}")
+        return
+    values = manifest["resources"].get("targets", [])
     if isinstance(values, list) and values:
         for target in values:
             print(f"  - {target_line(target)}")
     else:
         print("  - none published")
+
+
+def evidence_local_path(key: str) -> Path:
+    name = Path(key).name or "evidence.bin"
+    safe = re.sub(r"[^A-Za-z0-9._-]", "_", name)[:120]
+    digest = hashlib.sha256(key.encode("utf-8")).hexdigest()[:10]
+    return EVIDENCE_DIR / f"{digest}-{safe}"
+
+
+def evidence(_: argparse.Namespace) -> None:
+    session = read_session()
+    manifest = refresh(session)
+    response = request_json(validate_base_url(str(session["base_url"])), "/api/v1/lab-access/replay", token=str(session["session_token"]))
+    items = response.get("evidence", [])
+    if not isinstance(items, list):
+        fail("replay gateway returned an invalid evidence list")
+    EVIDENCE_DIR.mkdir(parents=True, exist_ok=True)
+    downloaded = 0
+    for item in items:
+        if not isinstance(item, dict) or not isinstance(item.get("key"), str) or not isinstance(item.get("url"), str):
+            continue
+        destination = evidence_local_path(item["key"])
+        if destination.is_file():
+            continue
+        destination.write_bytes(download_bytes(item["url"]))
+        try:
+            os.chmod(destination, 0o600)
+        except OSError:
+            pass
+        downloaded += 1
+    print(f"✓ Downloaded {downloaded} new approved evidence file(s) for {manifest['pod_id']} to {EVIDENCE_DIR}.")
 
 
 def disconnect(_: argparse.Namespace) -> None:
@@ -276,6 +364,7 @@ def parser() -> argparse.ArgumentParser:
     x = sub.add_parser("status"); x.set_defaults(func=status)
     x = sub.add_parser("scope"); x.set_defaults(func=scope)
     x = sub.add_parser("targets"); x.set_defaults(func=targets)
+    x = sub.add_parser("evidence"); x.set_defaults(func=evidence)
     x = sub.add_parser("pod"); nested = x.add_subparsers(dest="pod_command", required=True); y = nested.add_parser("info"); y.set_defaults(func=pod_info)
     x = sub.add_parser("disconnect"); x.set_defaults(func=disconnect)
     return p
