@@ -24,6 +24,12 @@ jobs:
           bash -n scripts/safe-nmap.sh
           node --check labs/local-access-control/app/server.mjs
 
+      - name: Validate installed NeoLabs command
+        run: |
+          python -m pip install --disable-pip-version-check --no-deps -e .
+          neolabs --help >/dev/null
+          neolabs pod --help >/dev/null
+
       - name: Test broker-manifest target guard
         run: |
           mkdir -p runtime
@@ -51,17 +57,14 @@ jobs:
             echo 'Wildcard target was incorrectly accepted.' >&2
             exit 1
           fi
-
           if python scripts/validate_target.py 8.8.8.8; then
             echo 'Out-of-scope public IP was incorrectly accepted.' >&2
             exit 1
           fi
-
           if python scripts/validate_target.py 10.40.4.0/28; then
             echo 'Unpublished CIDR was incorrectly accepted.' >&2
             exit 1
           fi
-
           rm -rf runtime
 
       - name: Validate local practice target
