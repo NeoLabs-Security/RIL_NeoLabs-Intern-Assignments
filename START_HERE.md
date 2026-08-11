@@ -4,6 +4,16 @@ This repository is the **NeoLabs × RIL Grey-Box Pentest Toolkit**. It provides 
 
 Official weekly tasks and graded submissions belong in the separate **RIL_NeoLabs-Intern-Assignments** repository.
 
+## One-time CLI setup
+
+From this repository root install the student CLI locally:
+
+```bash
+python3 -m pip install --user -e .
+```
+
+Confirm `neolabs --help` works. If your operating system does not add the user-level Python scripts directory to `PATH`, follow the Python installation warning or use `python3 tools/neolabs.py` as the equivalent fallback.
+
 ## Before any practical work
 
 1. Read `RULES_OF_ENGAGEMENT.md`.
@@ -12,17 +22,17 @@ Official weekly tasks and graded submissions belong in the separate **RIL_NeoLab
 4. Authenticate and refresh your scope:
 
 ```bash
-python3 tools/neolabs.py login
-python3 tools/neolabs.py connect
-python3 tools/neolabs.py scope
-python3 tools/neolabs.py targets
+neolabs login
+neolabs connect
+neolabs scope
+neolabs targets
 ```
 
 The base URL is the **authentication/discovery entry point**. It is not necessarily the pentest target.
 
 ## Why the toolkit now shows real IPs
 
-Pentest training sometimes requires actual IP/CIDR work for Nmap and service discovery. The broker therefore returns the exact lab targets that your pod is authorised to test. For example, a week may expose one IP, several named services or a small `/28` lab range.
+Pentest training sometimes requires actual IP/CIDR work for Nmap and service discovery. The broker therefore returns the exact lab targets that your pod is authorised to test. A week may expose one IP, several named services or a bounded lab range.
 
 The student cannot select a different pod by editing a local file. The current manifest is server-issued and stored only in the ignored `runtime/` directory.
 
@@ -31,8 +41,8 @@ The student cannot select a different pod by editing a local file. The current m
 Always read scope first:
 
 ```bash
-python3 tools/neolabs.py scope
-python3 tools/neolabs.py targets
+neolabs scope
+neolabs targets
 ```
 
 Then use the fixed wrapper with **one** returned target:
