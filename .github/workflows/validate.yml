@@ -20,38 +20,49 @@ jobs:
 
       - name: Validate Python, Node and shell syntax
         run: |
-          python -m py_compile scripts/validate_target.py
+          python -m py_compile scripts/validate_target.py tools/neolabs.py
           bash -n scripts/safe-nmap.sh
           node --check labs/local-access-control/app/server.mjs
 
-      - name: Test exact-target guard
+      - name: Test broker-manifest target guard
         run: |
-          ROE_ACKNOWLEDGED=YES \
-          AUTHORIZED_TARGET_HOST=localhost \
-          AUTHORIZED_TARGET_SCHEME=https \
-          AUTHORIZED_TARGET_PORT=443 \
-          ASSIGNMENT_ID=ci-local-test \
-          python scripts/validate_target.py
+          mkdir -p runtime
+          cat > runtime/access-manifest.json <<'JSON'
+          {
+            "pod_id": "pod-03",
+            "track": "PENTEST",
+            "scenario_id": "ci-ghost-login",
+            "resources": {
+              "targets": [
+                {"label": "VCC Web", "hostname": "pod03.lab.example.invalid", "ip": "10.40.3.21", "ports": [80, 443]}
+              ],
+              "allowed_cidrs": ["10.40.3.16/28"],
+              "prohibited": ["anything outside the returned scope"]
+            }
+          }
+          JSON
 
-          if ROE_ACKNOWLEDGED=YES \
-             AUTHORIZED_TARGET_HOST='*' \
-             AUTHORIZED_TARGET_SCHEME=https \
-             AUTHORIZED_TARGET_PORT=443 \
-             ASSIGNMENT_ID=ci-invalid-test \
-             python scripts/validate_target.py; then
+          python scripts/validate_target.py pod03.lab.example.invalid
+          python scripts/validate_target.py 10.40.3.21
+          python scripts/validate_target.py 10.40.3.22
+          python scripts/validate_target.py 10.40.3.16/28
+
+          if python scripts/validate_target.py '*'; then
             echo 'Wildcard target was incorrectly accepted.' >&2
             exit 1
           fi
 
-          if ROE_ACKNOWLEDGED=YES \
-             AUTHORIZED_TARGET_HOST=8.8.8.8 \
-             AUTHORIZED_TARGET_SCHEME=https \
-             AUTHORIZED_TARGET_PORT=443 \
-             ASSIGNMENT_ID=ci-invalid-ip \
-             python scripts/validate_target.py; then
-            echo 'Raw public IP target was incorrectly accepted.' >&2
+          if python scripts/validate_target.py 8.8.8.8; then
+            echo 'Out-of-scope public IP was incorrectly accepted.' >&2
             exit 1
           fi
+
+          if python scripts/validate_target.py 10.40.4.0/28; then
+            echo 'Unpublished CIDR was incorrectly accepted.' >&2
+            exit 1
+          fi
+
+          rm -rf runtime
 
       - name: Validate local practice target
         run: |
