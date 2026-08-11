@@ -1,41 +1,66 @@
 # NeoLabs Grey-Box Penetration Testing Intern Toolkit
 
-The **NeoLabs Grey-Box Penetration Testing Intern Toolkit** is the shared learning, practice and technical enablement repository for authorised web application and API security testing through the VCC Security Lab.
+The **NeoLabs × RIL Grey-Box Pentest Toolkit** is the student-side **Learn + Connect + Operate** repository for authorised web, API and bounded network discovery work in the VCC Security Lab.
 
-It contains NeoLabs-branded learning materials, safe tool configurations, synthetic practice applications, testing checklists, evidence templates and reporting resources. Official weekly assignments, live pod addresses, credentials, mentor ground truth and student submissions belong in the restricted central assignments workflow—not here.
+It contains NeoLabs-branded learning material, safe tool configuration, synthetic practice applications, evidence/reporting templates and the NeoLabs pod-access client. Official weekly assignments and graded submissions belong in the separate central assignments repository.
 
-## Start here
+## Student flow
 
-1. Read `RULES_OF_ENGAGEMENT.md`.
-2. Follow `LEARNING_PATH.md`.
-3. Use `docs/README.md` as the complete documentation index.
-4. Practise first with `labs/local-access-control/` and run its smoke test before relying on the lab.
-5. Use the scope validator, safe Burp workflow, approved restricted discovery helper and reporting templates during assigned work.
-6. Treat the exact target issued in the assignment as the only authorised target.
+1. Read `START_HERE.md`, `RULES_OF_ENGAGEMENT.md` and `LEARNING_PATH.md`.
+2. Receive your pod number and private NeoLabs Access Code.
+3. Authenticate and refresh the current server-authorised scope:
 
-## Version 1 contents
+```bash
+python3 tools/neolabs.py login
+python3 tools/neolabs.py connect
+python3 tools/neolabs.py scope
+python3 tools/neolabs.py targets
+```
 
-- professional scope, Rules of Engagement, stop conditions and proof thresholds;
-- HTTP, browser, proxy and API foundations;
-- Burp Suite Community workflow and exact-scope guidance;
+4. Use the returned hostname/IP/CIDR only. For Nmap, use the fixed wrapper:
+
+```bash
+bash scripts/safe-nmap.sh <returned-hostname-ip-or-cidr>
+```
+
+5. Complete the week's GitHub Issue and submit evidence/reporting to `RIL_NeoLabs-Intern-Assignments`.
+
+## Why target IPs are not committed here
+
+Pentest interns need real lab IPs and sometimes a small CIDR to learn host/service discovery correctly. Those values are therefore returned **at runtime** by the NeoLabs broker and written to ignored `runtime/access-manifest.json`.
+
+A rebuilt pod can receive a different IP without requiring a repo edit or a new manual target file. `neolabs connect` refreshes it.
+
+The safe Nmap validator accepts an exact server-returned hostname/IP, an IP inside a server-returned CIDR, or an exact CIDR returned by `neolabs scope`. It rejects everything else.
+
+## Toolkit contents
+
+- Rules of Engagement, stop conditions and proof thresholds;
+- HTTP/browser/proxy/API foundations;
+- Burp Suite Community workflow;
 - application mapping and grey-box methodology;
-- authentication, session and authorisation testing;
+- authentication/session/authorisation testing;
 - input validation, business logic and API security;
-- restricted low-rate discovery and exact-target validation;
+- restricted low-rate Nmap discovery bound to the live pod manifest;
 - evidence, finding, pentest and retest templates;
-- interactive localhost-only synthetic practice application with a student-runnable smoke test;
-- troubleshooting and capstone material;
-- repository safety checks that reject credentials, live target material and unsafe container settings.
+- localhost-only synthetic practice applications;
+- NeoLabs-branded publication pipeline.
+
+## Architecture boundary
+
+**Toolkit repo:** Learn + Connect + Operate  
+**VCC Security Lab:** Target + Scenario + Synthetic Data  
+**Lab Access Broker:** Authenticate + Resolve Pod + Publish IP/CIDR Scope  
+**Central Assignment repo:** Task + Evidence + Submission + Assessment
 
 ## Safety boundary
 
-- Test only the exact target assigned in writing by NeoLabs.
-- Never scan public networks, neighbouring pods or infrastructure not listed in the Rules of Engagement.
-- Stop when the approved proof threshold is reached; do not establish persistence, exfiltrate data or disrupt service.
-- Use synthetic accounts and data only.
-- Never commit credentials, tokens, private URLs, Burp project files containing live traffic or unredacted evidence.
-- A local change to a target label must never grant access to another VCC pod.
+- Test only resources returned by the broker **and** permitted by the written assignment.
+- Never scan public networks, neighbouring pods or infrastructure outside the returned scope.
+- Stop at the approved proof threshold; do not establish persistence, destroy data or disrupt service.
+- Use synthetic accounts/data only.
+- Never commit Access Codes, runtime manifests, private keys, Burp projects containing live traffic or unredacted evidence.
 
 ## Release status
 
-The Version 1 student toolkit is on `main` and is ready for onboarding, local practice and supervised VCC assessments. Live VCC work still requires an operator-issued assignment, exact target, synthetic account, testing window and approved scope.
+The toolkit on `main` contains the broker client and manifest-bound discovery helpers. Live VCC work still depends on the broker being deployed/enabled and the current pod/scenario resources being published by the operator pipeline.
