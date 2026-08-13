@@ -4,33 +4,40 @@ This repository is the **NeoLabs × RIL Grey-Box Pentest Toolkit**. It provides 
 
 Official weekly tasks and graded submissions belong in the separate **RIL_NeoLabs-Intern-Assignments** repository.
 
-## One-time CLI setup
+## One-time Windows setup
 
-From this repository root install the student CLI locally:
+From this repository root, double-click:
 
-```bash
-python3 -m pip install --user -e .
+```text
+setup-windows.cmd
 ```
 
-Confirm `neolabs --help` works. If your operating system does not add the user-level Python scripts directory to `PATH`, follow the Python installation warning or use `python3 tools/neolabs.py` as the equivalent fallback.
+The readiness check verifies Python and Windows OpenSSH. Windows interns do **not** need `pip install`, Python Scripts PATH changes or a manually configured gateway URL.
+
+Use the toolkit-local launcher from PowerShell:
+
+```powershell
+.\neolabs.cmd --help
+```
+
+For Linux/macOS or advanced manual use, the Python client under `tools/neolabs.py` remains available.
 
 ## Before any practical work
 
 1. Read `RULES_OF_ENGAGEMENT.md`.
-2. Set the NeoLabs lab base URL supplied by the programme as `NEOLABS_LAB_BASE_URL`.
-3. Use the private pod number + NeoLabs Access Code delivered for the week.
-4. Authenticate and refresh your scope:
+2. Use the private pod number + NeoLabs Access Code delivered for the week.
+3. Authenticate and refresh your scope:
 
-```bash
-neolabs login
-neolabs connect
-neolabs scope
-neolabs targets
+```powershell
+.\neolabs.cmd login
+.\neolabs.cmd connect
+.\neolabs.cmd scope
+.\neolabs.cmd targets
 ```
 
-The base URL is the **authentication/discovery entry point**. It is not necessarily the pentest target.
+The NeoLabs gateway is the **authentication/discovery entry point**. It is not the pentest target.
 
-## Why the toolkit now shows real IPs
+## Why the toolkit can show real IPs
 
 Pentest training sometimes requires actual IP/CIDR work for Nmap and service discovery. The broker therefore returns the exact lab targets that your pod is authorised to test. A week may expose one IP, several named services or a bounded lab range.
 
@@ -40,28 +47,18 @@ The student cannot select a different pod by editing a local file. The current m
 
 Always read scope first:
 
-```bash
-neolabs scope
-neolabs targets
+```powershell
+.\neolabs.cmd scope
+.\neolabs.cmd targets
 ```
 
-Then use the fixed wrapper with **one** returned target:
+For Week 1, keep the isolated NeoLabs tunnel open and use the guarded wrapper only against the server-issued local target described in the assignment. Never substitute the public EC2 address or another pod.
 
-```bash
-bash scripts/safe-nmap.sh 10.40.3.21
-```
-
-or, only when `neolabs scope` explicitly returns the range:
-
-```bash
-bash scripts/safe-nmap.sh 10.40.3.16/28
-```
-
-The validator rejects IPs/CIDRs/hostnames outside the live server-issued manifest and the wrapper does not accept arbitrary Nmap flags.
+The validator rejects targets outside the live server-issued manifest and the wrapper does not accept arbitrary Nmap flags.
 
 ## Burp/browser work
 
-Configure Burp Suite and browser tooling only for the hostnames/URLs returned by `neolabs targets` and the limits written in the current GitHub assignment.
+Configure Burp Suite and browser tooling only for the hostnames/URLs returned by `targets` and the limits written in the current GitHub assignment.
 
 ## Learning order
 
