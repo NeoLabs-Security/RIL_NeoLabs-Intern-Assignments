@@ -13,26 +13,38 @@ The **NeoLabs × RIL Grey-Box Pentest Toolkit** is the student-side **Learn + Co
 2. [`publications/01_NeoLabs_GreyBox_Week_01_Pentesting_Foundations.pdf`](publications/01_NeoLabs_GreyBox_Week_01_Pentesting_Foundations.pdf) — scope, HTTP, Burp, safe discovery and evidence foundations.
 3. [`RULES_OF_ENGAGEMENT.md`](RULES_OF_ENGAGEMENT.md) — mandatory safety boundary.
 
-### 2. Install the NeoLabs client
+### 2. Windows setup — no pip/PATH work required
 
-```bash
-python -m pip install -e .
+From the cloned toolkit folder, double-click:
+
+```text
+setup-windows.cmd
 ```
+
+It checks that Python and the Windows OpenSSH Client are available. You do **not** need to run `pip install -e .`, edit PATH, or manually enter the NeoLabs gateway URL.
+
+Then open PowerShell in this toolkit folder and use the local launcher:
+
+```powershell
+.\neolabs.cmd --help
+```
+
+The launcher automatically uses the official NeoLabs gateway and runs the toolkit client with the Python installation Windows can actually find.
 
 ### 3. Authenticate and open your isolated live tunnel
 
-Set the NeoLabs gateway URL supplied in your onboarding message, then run:
+Run:
 
-```bash
-neolabs login
-neolabs status
-neolabs pod info
-neolabs scope
-neolabs targets
-neolabs connect
+```powershell
+.\neolabs.cmd login
+.\neolabs.cmd status
+.\neolabs.cmd pod info
+.\neolabs.cmd scope
+.\neolabs.cmd targets
+.\neolabs.cmd connect
 ```
 
-For Week 1, `neolabs connect` opens a **pod-isolated SSH local forward**. When SSH asks for a password, enter the same private **NeoLabs Access Code** you used for `neolabs login` and keep that terminal open.
+`login` asks only for your assigned pod number and your private NeoLabs Access Code. For Week 1, `connect` opens a **pod-isolated SSH local forward**. When SSH asks for a password, enter the same private **NeoLabs Access Code** you used for login and keep that terminal open.
 
 Your authorised learner application is then exposed only on:
 
@@ -63,7 +75,8 @@ The wrapper is tunnel-aware and scans only the server-issued local-forward port.
 
 ## What is preconfigured here
 
-- installable `neolabs` authenticator/access client;
+- local Windows `neolabs.cmd` launcher with the official gateway preconfigured;
+- Windows readiness check with no pip/PATH dependency;
 - server-managed pod/track/target scope;
 - restricted SSH local-forward workflow using the private Access Code;
 - tunnel-aware safe Nmap wrapper + target validator;
@@ -77,6 +90,8 @@ The wrapper is tunnel-aware and scans only the server-issued local-forward port.
 
 ```text
 README.md                 ← you are here
+setup-windows.cmd         ← one-click Windows readiness check
+neolabs.cmd               ← Windows launcher; avoids pip/PATH problems
 docs/week-01/             ← current task/foundations sources
 publications/             ← branded student PDFs
 tools/neolabs.py          ← pod access/authenticator client
