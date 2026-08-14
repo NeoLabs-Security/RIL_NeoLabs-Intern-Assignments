@@ -24,25 +24,41 @@ The VCC uses a cost-aware hybrid runtime. Interactive VCC surfaces are scheduled
 
 ### SOC Analyst Level 1 — Windows
 
-Use the current SOC toolkit and normally double-click:
+Use the current SOC toolkit and double-click:
 
 ```text
 START-NEOLABS-SOC.cmd
 ```
 
-The launcher prepares/reuses WSL2 + the local Wazuh stack, authenticates to NeoLabs, connects the server-assigned pod, verifies that a real VCC event is searchable in `wazuh-alerts-*`, reports telemetry freshness, provisions the Night Watch and Telemetry Health dashboard objects when supported, checks local index retention/disk health, copies the local Wazuh `admin` password to the Windows clipboard without printing it, and opens the dashboard.
+This is the sole normal Windows SOC entry point. On first run it owns the supported WSL2/Docker Desktop/Linux-prerequisite/Wazuh preparation path; on subsequent runs it reuses the existing local Wazuh installation. It authenticates/reuses the NeoLabs session, connects the server-assigned pod, starts Wazuh, verifies a real VCC event is searchable in `wazuh-alerts-*`, reports telemetry freshness, provisions the Night Watch/Telemetry Health objects when supported, checks local index retention/disk health, copies the local Wazuh `admin` password to the Windows clipboard without printing it and opens the dashboard.
 
-For diagnostics use:
+Use the same file for diagnostics/status/login:
 
 ```text
-CHECK-NEOLABS-SOC.cmd
+START-NEOLABS-SOC.cmd doctor
+START-NEOLABS-SOC.cmd status
+START-NEOLABS-SOC.cmd login
 ```
 
-or, from the toolkit root:
+Students should not manually choose among internal Docker/Wazuh/PowerShell setup scripts.
 
-```powershell
-.\neolabs.cmd doctor
+### SOC Analyst Level 1 — Linux / Ubuntu
+
+From the SOC toolkit root:
+
+```bash
+bash start-neolabs-soc.sh
 ```
+
+After first-run permission normalisation, later runs may use:
+
+```bash
+./start-neolabs-soc.sh
+```
+
+On Ubuntu/Debian the launcher can install missing base packages and Docker Engine + Compose v2, configure the Wazuh indexer kernel prerequisite, prepare/reuse the Wazuh stack and perform the same assigned-pod telemetry verification. Run it as the normal Linux user; the script invokes `sudo` itself only for OS-level installation/kernel/group changes.
+
+Diagnostics use `./start-neolabs-soc.sh doctor`. On headless Linux, the launcher keeps Wazuh loopback-only and prints an SSH local-port-forward example instead of exposing the dashboard publicly.
 
 The local Wazuh dashboard is normally `https://127.0.0.1:8443`. The human login username is `admin`; the password is locally generated and never belongs in this assignments repository.
 
