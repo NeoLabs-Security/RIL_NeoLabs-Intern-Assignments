@@ -8,27 +8,40 @@ Use your assigned pod's VCC telemetry in the local NeoLabs Wazuh workstation to 
 
 ### Required preparation
 
-On Windows, pull the latest SOC toolkit and normally double-click:
+#### Windows
+
+Pull the latest SOC toolkit and double-click:
 
 ```text
 START-NEOLABS-SOC.cmd
 ```
 
-The launcher must reach **SOC WORKSTATION READY** before you begin. READY now means your assigned-pod VCC telemetry is actually indexed/searchable in Wazuh, not merely that Docker containers are running. The launcher also reports the most recent indexed VCC event, checks local index/disk health, and opens the Wazuh dashboard.
+#### Linux / Ubuntu
 
-If startup or telemetry looks wrong, use:
+From the SOC toolkit root:
+
+```bash
+bash start-neolabs-soc.sh
+```
+
+After first-run permission normalisation, later runs may use:
+
+```bash
+./start-neolabs-soc.sh
+```
+
+The platform launcher owns first-run prerequisite/Wazuh setup and subsequent startup. Do not manually execute low-level Wazuh/Docker helper scripts or guess where `sudo` belongs.
+
+The launcher must reach **SOC WORKSTATION READY** before you begin. READY means your assigned-pod VCC telemetry is actually indexed/searchable in Wazuh, not merely that Docker containers are running. The launcher also reports the most recent indexed VCC event, checks local index/disk health, and opens the Wazuh dashboard when a GUI is available.
+
+If startup or telemetry looks wrong:
 
 ```text
-CHECK-NEOLABS-SOC.cmd
+Windows: START-NEOLABS-SOC.cmd doctor
+Linux:   ./start-neolabs-soc.sh doctor
 ```
 
-or:
-
-```powershell
-.\neolabs.cmd doctor
-```
-
-At the Wazuh login page use username `admin`; on Windows the launcher copies the locally generated password to the clipboard without printing it.
+At the Wazuh login page use username `admin`. On Windows the launcher copies the locally generated password to the clipboard without printing it. On a headless Linux server, the launcher keeps Wazuh loopback-only and prints an SSH local-port-forward example for browser access from your own computer.
 
 ### Where to work in Wazuh
 
