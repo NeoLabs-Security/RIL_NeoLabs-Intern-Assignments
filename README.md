@@ -19,21 +19,25 @@ For the current cross-repository setup/runtime model, read [`PROGRAMME_CURRENT_S
 
 1. Open [`assignments/week-01/README.md`](assignments/week-01/README.md) and your assigned track brief.
 2. Clone/pull the latest version of your track toolkit.
-3. Follow the toolkit-local Windows flow instead of installing a global CLI.
+3. Follow the toolkit's current platform launcher instead of reconstructing setup from internal helper scripts.
 4. Authenticate only with your assigned pod number + private NeoLabs Access Code.
 5. Confirm the server-issued pod/track/runtime state before collecting evidence.
 6. Create the required Week 1 branch and submission folder.
 7. Never commit Access Codes, session tokens, signed URLs, certificates, private keys, passwords or unrelated pod data.
 
-### Current Windows entry points
+### Current startup entry points
 
-**SOC:** normally double-click `START-NEOLABS-SOC.cmd`. Use `CHECK-NEOLABS-SOC.cmd` / `.\neolabs.cmd doctor` for diagnostics. The launcher does not report READY until assigned-pod VCC telemetry is actually searchable in the local Wazuh indexer.
+**SOC Windows:** double-click `START-NEOLABS-SOC.cmd`. The same file also provides `doctor`, `status` and `login` actions, for example `START-NEOLABS-SOC.cmd doctor`.
 
-**Pentest:** run `setup-windows.cmd` once, then `.\neolabs.cmd login`, `status`, `pod info`, `scope`, `targets`, and `connect` from the toolkit folder.
+**SOC Linux/Ubuntu:** from the SOC toolkit root run `bash start-neolabs-soc.sh`; after first-run permission normalisation, `./start-neolabs-soc.sh` is the normal command. Diagnostics use `./start-neolabs-soc.sh doctor`.
 
-**Support:** run `setup-windows.cmd` once, then `.\neolabs.cmd login`, `status`, `pod info`, `targets`, and `connect` from the toolkit folder.
+The SOC launcher does not report READY until assigned-pod VCC telemetry is actually searchable in the local Wazuh indexer. Students should not manually choose among low-level Wazuh/Docker/setup scripts.
 
-Do not use old instructions that require `python -m pip install -e .`, a manually entered gateway URL, or bare `neolabs` on Windows.
+**Pentest Windows:** run `setup-windows.cmd` once, then `.\neolabs.cmd login`, `status`, `pod info`, `scope`, `targets`, and `connect` from the toolkit folder.
+
+**Support Windows:** run `setup-windows.cmd` once, then `.\neolabs.cmd login`, `status`, `pod info`, `targets`, and `connect` from the toolkit folder.
+
+Do not use old instructions that require a global CLI, a manually entered gateway URL, or bare `neolabs` on Windows.
 
 ## Official submission workflow
 
