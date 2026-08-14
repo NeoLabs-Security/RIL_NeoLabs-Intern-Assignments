@@ -18,17 +18,20 @@ Your pod and track are server-managed through your private NeoLabs Access Code. 
 
 1. Pull the latest version of your assigned track toolkit.
 2. Read the toolkit Week 1 launch pack and its root README/START_HERE guide.
-3. Use the current toolkit-local startup path; do **not** install a global CLI just to start Week 1.
+3. Use the current supported platform launcher rather than reconstructing setup from internal scripts.
 4. Authenticate with your assigned pod number + private NeoLabs Access Code when prompted.
 5. Confirm the server-issued pod/track/runtime state before collecting evidence.
 
-### Windows quick start
+### Quick start
 
-- **SOC:** double-click `START-NEOLABS-SOC.cmd`. Use `CHECK-NEOLABS-SOC.cmd` or `.\neolabs.cmd doctor` if any telemetry/dashboard stage fails.
-- **Pentest:** run `setup-windows.cmd` once, then use `.\neolabs.cmd ...` from the toolkit folder.
-- **Support:** run `setup-windows.cmd` once, then use `.\neolabs.cmd ...` from the toolkit folder.
+- **SOC Windows:** double-click `START-NEOLABS-SOC.cmd`; if diagnostics are needed use `START-NEOLABS-SOC.cmd doctor`.
+- **SOC Linux/Ubuntu:** run `bash start-neolabs-soc.sh`; after first setup use `./start-neolabs-soc.sh`. Diagnostics use `./start-neolabs-soc.sh doctor`.
+- **Pentest Windows:** run `setup-windows.cmd` once, then use `.\neolabs.cmd ...` from the toolkit folder.
+- **Support Windows:** run `setup-windows.cmd` once, then use `.\neolabs.cmd ...` from the toolkit folder.
 
-Old examples that require `python -m pip install -e .`, a manually entered gateway URL or bare `neolabs` on Windows are superseded.
+For SOC, the root launcher owns first-run prerequisite/Wazuh setup and later startup. Do not manually run low-level Wazuh/Docker helper scripts or add `sudo` to random internal commands.
+
+Old examples that require a global CLI, a manually entered gateway URL or bare `neolabs` on Windows are superseded.
 
 ## Submission workflow
 
