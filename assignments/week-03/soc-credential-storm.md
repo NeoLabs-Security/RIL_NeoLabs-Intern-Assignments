@@ -15,9 +15,16 @@ Use the **current SOC Level 1 toolkit** for learning material, Wazuh and NeoLabs
 1. Pull the latest SOC toolkit.
 2. Read `labs/02-credential-storm-replay/README.md` when Week 3 is released.
 3. Open your assigned Week 3 Issue and confirm the authorised exercise/replay window and deadline.
-4. On Windows, normally double-click `START-NEOLABS-SOC.cmd` and wait for **SOC WORKSTATION READY**.
-5. If necessary, run `CHECK-NEOLABS-SOC.cmd` or `.\neolabs.cmd doctor` to prove the telemetry-to-dashboard path is healthy.
-6. Run `.\neolabs.cmd status` and confirm the server-issued scenario is `w03-credential-storm` and the pod matches your assignment.
+4. Start the workstation with the current platform root launcher and wait for **SOC WORKSTATION READY**:
+   - Windows: `START-NEOLABS-SOC.cmd`
+   - Linux/Ubuntu: `bash start-neolabs-soc.sh` (later runs: `./start-neolabs-soc.sh`)
+5. If necessary, run the same launcher in Doctor mode:
+   - Windows: `START-NEOLABS-SOC.cmd doctor`
+   - Linux: `./start-neolabs-soc.sh doctor`
+6. Confirm the current server state before investigating:
+   - Windows: `START-NEOLABS-SOC.cmd status`
+   - Linux: `./start-neolabs-soc.sh status`
+   The scenario must be `w03-credential-storm` and the pod must match your assignment.
 
 The toolkit automatically uses the official NeoLabs gateway. Do not replace it with a copied/private URL. If the live exercise has ended, continue from the authorised pod-scoped replay. Do not reproduce credential attacks outside an explicit mentor-controlled live window.
 
