@@ -22,7 +22,7 @@ The VCC uses a cost-aware hybrid runtime. Interactive VCC surfaces are scheduled
 
 ## Track startup
 
-### SOC Analyst Level 1 — Windows
+### SOC Analyst Level 1 — physical Windows 10/11
 
 Use the current SOC toolkit and double-click:
 
@@ -30,7 +30,9 @@ Use the current SOC toolkit and double-click:
 START-NEOLABS-SOC.cmd
 ```
 
-This is the sole normal Windows SOC entry point. On first run it owns the supported WSL2/Docker Desktop/Linux-prerequisite/Wazuh preparation path; on subsequent runs it reuses the existing local Wazuh installation. It authenticates/reuses the NeoLabs session, connects the server-assigned pod, starts Wazuh, verifies a real VCC event is searchable in `wazuh-alerts-*`, reports telemetry freshness, provisions the Night Watch/Telemetry Health objects when supported, checks local index retention/disk health, copies the local Wazuh `admin` password to the Windows clipboard without printing it and opens the dashboard.
+This is the sole normal Windows SOC entry point. Before WSL/Docker setup it now checks the host type; Windows Server and detected Windows VM/VPS guests are rejected with instructions to use an Ubuntu/Debian VPS instead.
+
+On a supported physical Windows workstation, first run owns the WSL2/Docker Desktop/Linux-prerequisite/Wazuh preparation path; subsequent runs reuse the existing local Wazuh installation. It authenticates/reuses the NeoLabs session, connects the server-assigned pod, starts Wazuh, verifies a real VCC event is searchable in `wazuh-alerts-*`, reports telemetry freshness, provisions the Night Watch/Telemetry Health objects when supported, checks local index retention/disk health, copies the local Wazuh `admin` password to the Windows clipboard without printing it and opens the dashboard.
 
 Use the same file for diagnostics/status/login:
 
@@ -42,7 +44,7 @@ START-NEOLABS-SOC.cmd login
 
 Students should not manually choose among internal Docker/Wazuh/PowerShell setup scripts.
 
-### SOC Analyst Level 1 — Linux / Ubuntu
+### SOC Analyst Level 1 — Linux / Ubuntu / VPS
 
 From the SOC toolkit root:
 
@@ -57,6 +59,8 @@ After first-run permission normalisation, later runs may use:
 ```
 
 On Ubuntu/Debian the launcher can install missing base packages and Docker Engine + Compose v2, configure the Wazuh indexer kernel prerequisite, prepare/reuse the Wazuh stack and perform the same assigned-pod telemetry verification. Run it as the normal Linux user; the script invokes `sudo` itself only for OS-level installation/kernel/group changes.
+
+**SOC VPS policy:** interns using a VPS or remote server must provision Ubuntu or Debian Linux. Recommended images are Ubuntu 22.04/24.04 LTS or a current Debian release. Do not use Windows Server or a Windows VM/VPS guest for the SOC workstation. This avoids WSL2/nested-virtualisation dependence on the VPS provider.
 
 Diagnostics use `./start-neolabs-soc.sh doctor`. On headless Linux, the launcher keeps Wazuh loopback-only and prints an SSH local-port-forward example instead of exposing the dashboard publicly.
 
