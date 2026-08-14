@@ -70,6 +70,19 @@ The local Wazuh dashboard is normally `https://127.0.0.1:8443`. The human login 
 
 Run `setup-windows.cmd` once, then use the toolkit-local commands:
 
+# NeoLabs × RIL Grey-Box Pentesting — Current Programme State
+
+**Operational baseline:** 2026-08-14  
+**Current assignment:** Week 01 — Operation Night Watch  
+**VCC topology:** five isolated pods (`pod-01` through `pod-05`)
+
+This file is the current operational reference for the Grey-Box toolkit. Technical learning chapters remain valid unless they conflict with this file, the root README, current Rules of Engagement, the weekly assignment or the current server-issued manifest.
+
+## Windows startup
+
+Run `setup-windows.cmd` once from the latest toolkit checkout. Then use the toolkit-local launcher from PowerShell
+(Document current Grey-Box programme state)
+
 ```powershell
 .\neolabs.cmd login
 .\neolabs.cmd status
@@ -131,3 +144,48 @@ Later-week material may be staged before release; only the current written assig
 ## Safety precedence
 
 Written task scope + current server-issued pod/track/resources always win over an older screenshot, cached target, old branch, chat message or copied command. Stop and contact a mentor if another pod, real data, credentials, unexpected infrastructure access or service instability appears.
+Windows interns do **not** need a global `pip install`, Python Scripts PATH changes or a manually entered NeoLabs gateway URL for the normal programme flow.
+
+The server controls the intern → track → pod → current resource mapping. The student cannot authorise another pod by editing local files.
+
+## Week 1 target access
+
+Operation Night Watch is a HYBRID baseline week. During the approved interactive window, `connect` opens a pod-isolated local tunnel to the authorised learner application, normally:
+
+```text
+http://127.0.0.1:18080
+```
+
+Keep the connection terminal open. Use `scope` and `targets` immediately before testing. Never substitute the public EC2 address, an old hostname/IP, a guessed CIDR or another pod.
+
+If the current manifest does not publish a live target, stop live-target work. Later replay/offline states do not preserve an old Nmap target as continuing authorisation.
+
+## Week 1 intent
+
+Map normal application/service/HTTP behaviour without exploitation. Record the learner workflow, routes/requests, status codes, cookies/session indicators, APIs/object identifiers and visible controls. Use Burp Proxy/Repeater for safe normal requests and only the repository-approved low-rate discovery wrapper where the current assignment exposes network scope.
+
+No broad scanning, brute force, credential spraying, automated exploitation, destructive/state-changing testing, denial-of-service or cross-pod activity.
+
+## Twelve-week pentest arc
+
+| Week | Scenario | Main pentest emphasis |
+|---|---|---|
+| 01 | Operation Night Watch | scope discipline + application/service mapping |
+| 02 | Ghost Login | authentication/session behaviour |
+| 03 | Credential Storm | bounded synthetic credential-attack exercise during mentor window |
+| 04 | Broken Gate | authorisation/IDOR/access-control testing |
+| 05 | Poisoned Upload | safe file-upload validation |
+| 06 | Web Breach | controlled web vulnerability validation |
+| 07 | Cloud Locker | bounded S3/IAM permission assessment |
+| 08 | S3 Insider Trail | predefined cloud misuse/permission validation |
+| 09 | Data Escape | controlled cloud data-path assessment |
+| 10 | Hidden Endpoint | scoped API mapping/enumeration |
+| 11 | Developer Ransomware Drill | exposure/control validation without malware execution |
+| 12 | Blackout at VCC | capstone offensive validation + retest/handoff |
+
+Later-week content can be staged before release. Only the current written assignment and current server manifest authorise testing.
+
+## Safety precedence
+
+`RULES_OF_ENGAGEMENT.md` + current central assignment + current server manifest are authoritative. Stop if another pod/host becomes reachable, real data/credentials appear, the approved proof threshold is reached, unexpected state changes occur or service availability is affected.
+(Document current Grey-Box programme state)
