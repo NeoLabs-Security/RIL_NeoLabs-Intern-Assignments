@@ -1,0 +1,25 @@
+# NeoLabs live pod access state
+runtime/
+.neolabs/
+
+# Local secrets and per-student target state
+.env
+*.env.local
+*.token
+*.key
+*.pem
+tools/authorized-target.env
+
+# Student evidence is submitted to the central assignment repository, not this toolkit
+evidence/
+
+# Generated publications
+dist/
+
+# Local tooling
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+__pycache__/
+*.pyc

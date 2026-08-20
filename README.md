@@ -1,102 +1,83 @@
-# NeoLabs × Renaissance Innovation Labs Cybersecurity Internship
+# NeoLabs Grey-Box Penetration Testing Intern Toolkit
 
-## Central Assignments Repository
+The **NeoLabs × RIL Grey-Box Pentest Toolkit** is the student-side **Learn + Connect + Operate** repository for authorised VCC training.
 
-This repository is the **official graded work record** for the NeoLabs × Renaissance Innovation Labs (RIL) Cybersecurity Internship. Student learning/runtime tooling lives in the three track repositories; assignments, evidence, mentor feedback, revisions and final submissions live here.
+> **Current assignment:** Week 01 — Operation Night Watch.  
+> **Current architecture/status:** [`PROGRAMME_CURRENT_STATE.md`](PROGRAMME_CURRENT_STATE.md)
 
-> ## CURRENT WEEK — WEEK 01
-> **Operation Night Watch** is the active assignment. Start at [`assignments/week-01/README.md`](assignments/week-01/README.md), then open only your assigned track brief.
+## Week 1 objective
 
-For the current cross-repository setup/runtime model, read [`PROGRAMME_CURRENT_STATE.md`](PROGRAMME_CURRENT_STATE.md).
+Safely map the authorised VCC learner application and establish its normal HTTP/service behaviour. Week 1 is a baseline/documentation exercise, not a vulnerability hunt.
 
-## Tracks
+Read first:
 
-- **SOC Analyst Level 1** — Wazuh monitoring, log analysis, alert investigation, incident triage, timelines, reporting and detection improvement.
-- **Grey-Box Penetration Testing** — authorised application/service mapping, scoped testing, vulnerability validation, reporting and retesting.
-- **IT Security Support** — secure support, identity/network/service diagnosis, evidence preservation, containment/recovery and documentation.
+1. `publications/00_NeoLabs_GreyBox_Week_01_Launch_Pack.pdf`
+2. `publications/01_NeoLabs_GreyBox_Week_01_Pentesting_Foundations.pdf`
+3. [`RULES_OF_ENGAGEMENT.md`](RULES_OF_ENGAGEMENT.md)
 
-## Week 1 start sequence
+## Windows — current startup
 
-1. Open [`assignments/week-01/README.md`](assignments/week-01/README.md) and your assigned track brief.
-2. Clone/pull the latest version of your track toolkit.
-3. Follow the toolkit's current platform launcher instead of reconstructing setup from internal helper scripts.
-4. Authenticate only with your assigned pod number + private NeoLabs Access Code.
-5. Confirm the server-issued pod/track/runtime state before collecting evidence.
-6. Create the required Week 1 branch and submission folder.
-7. Never commit Access Codes, session tokens, signed URLs, certificates, private keys, passwords or unrelated pod data.
+From the latest toolkit checkout, double-click `setup-windows.cmd` once. Then open PowerShell in this toolkit folder and use:
 
-### Current startup entry points
+```powershell
+.\neolabs.cmd login
+.\neolabs.cmd status
+.\neolabs.cmd pod info
+.\neolabs.cmd scope
+.\neolabs.cmd targets
+.\neolabs.cmd connect
+```
 
-**SOC Windows:** double-click `START-NEOLABS-SOC.cmd`. The same file also provides `doctor`, `status` and `login` actions, for example `START-NEOLABS-SOC.cmd doctor`.
+Windows interns do **not** need a global `pip install`, a Python Scripts PATH edit or a manually entered gateway URL. Do not use bare `neolabs` on Windows.
 
-**SOC Linux/Ubuntu:** from the SOC toolkit root run `bash start-neolabs-soc.sh`; after first-run permission normalisation, `./start-neolabs-soc.sh` is the normal command. Diagnostics use `./start-neolabs-soc.sh doctor`.
+`login` asks for your assigned pod number and private NeoLabs Access Code. The server—not the workstation—controls your pod, track and currently authorised resources.
 
-The SOC launcher does not report READY until assigned-pod VCC telemetry is actually searchable in the local Wazuh indexer. Students should not manually choose among low-level Wazuh/Docker/setup scripts.
+## Week 1 learner target
 
-**Pentest Windows:** run `setup-windows.cmd` once, then `.\neolabs.cmd login`, `status`, `pod info`, `scope`, `targets`, and `connect` from the toolkit folder.
+During the approved interactive window, `connect` opens the pod-isolated local learner surface, normally:
 
-**Support Windows:** run `setup-windows.cmd` once, then `.\neolabs.cmd login`, `status`, `pod info`, `targets`, and `connect` from the toolkit folder.
+```text
+http://127.0.0.1:18080
+```
 
-Do not use old instructions that require a global CLI, a manually entered gateway URL, or bare `neolabs` on Windows.
+Keep the connection terminal open. Confirm `scope` and `targets` immediately before testing. Never substitute the public EC2 address, an old IP/hostname, a guessed CIDR or another pod.
 
-## Official submission workflow
+If `targets` does not expose a current live resource, stop live-target work and wait for the approved window.
 
-1. Read the current assignment scope, safety boundaries, deliverables and deadline.
-2. Create a branch using the required naming convention.
-3. Complete only the authorised practical work and collect only authorised evidence.
-4. Redact private information before committing.
-5. Push your branch and open a Pull Request.
-6. Link the assigned Issue when one has been provided.
-7. Respond to mentor feedback on the same branch.
-8. Do not merge your own PR unless a mentor explicitly instructs you to do so.
+## Operation Night Watch workflow
 
-## Branch naming
+1. Confirm current scope/target.
+2. Configure Burp so only that target is in scope.
+3. Use the repository-approved low-impact discovery wrapper only where the current assignment exposes network scope.
+4. Browse the normal learner workflow through Burp Proxy.
+5. Capture at least five normal requests from different functions.
+6. Replay two normal non-state-changing requests in Repeater and explain them.
+7. Record visible controls without bypassing them.
+8. Build the service/request/application map and evidence register for later comparison.
 
-`week-XX/<track>/<github-username>-<short-task-name>`
+Official graded submissions belong in `NeoLabs-Security/RIL_NeoLabs-Intern-Assignments`, not this toolkit.
 
-Examples:
+## Safety boundary
 
-- `week-01/soc/alex-night-watch`
-- `week-01/pentest/alex-night-watch`
-- `week-01/support/alex-night-watch`
+No broad scanning, brute force/credential spraying, automated exploitation, destructive/state-changing testing, denial-of-service, cross-pod testing or targets outside the current manifest/assignment. Stop if another pod/host becomes reachable, real data/credentials appear, the proof threshold is reached, unexpected state changes occur or service availability is affected.
 
-## Submission path
+## Repository map
 
-`submissions/week-XX/<track>/<github-username>/`
+```text
+README.md                 ← current start page
+PROGRAMME_CURRENT_STATE.md← current runtime/access reference
+START_HERE.md             ← detailed onboarding
+RULES_OF_ENGAGEMENT.md    ← mandatory scope/safety rules
+setup-windows.cmd         ← Windows readiness check
+neolabs.cmd               ← Windows toolkit-local launcher
+docs/week-01/             ← current Week 1 sources
+publications/             ← student PDFs
+tools/neolabs.py          ← underlying access client
+scripts/                  ← approved guarded helpers
+worksheets/ + templates/  ← work products/evidence
+labs/                     ← safe synthetic practice
+```
 
-## Evidence rules
-
-Acceptable evidence includes redacted screenshots, approved log excerpts, Wazuh event/rule IDs, authorised request/response observations, approved command output, timelines, ticket notes and retest evidence.
-
-Never submit passwords, NeoLabs Access Codes, AWS keys, API/session tokens, signed private URLs, SSH private keys, certificates/private keys, real customer data, production secrets or unrelated third-party information.
-
-## Scope and safety
-
-All testing must remain inside the written assignment scope and the NeoLabs/RIL controlled lab. The production VCC training topology is five isolated pods (`pod-01` through `pod-05`). Students do not receive EC2 shell access, broad AWS credentials, database/container access, mentor ground truth or cross-pod access.
-
-The server-issued pod/track/resources plus the written assignment are authoritative. Never reuse a cached/old IP when the current manifest no longer returns it.
-
-## Programme scenarios
-
-| Week | Scenario | Runtime class |
-|---|---|---|
-| 01 | Operation Night Watch | HYBRID |
-| 02 | The Ghost Login | HYBRID |
-| 03 | Credential Storm | LIVE_REQUIRED |
-| 04 | The Broken Gate | HYBRID |
-| 05 | Operation Poisoned Upload | HYBRID |
-| 06 | Web Breach | LIVE_REQUIRED |
-| 07 | Cloud Locker | STORAGE_NATIVE |
-| 08 | S3 Insider Trail | STORAGE_NATIVE |
-| 09 | Data Escape | STORAGE_NATIVE |
-| 10 | Hidden Endpoint | HYBRID |
-| 11 | Developer Ransomware Drill | ENDPOINT_LIVE |
-| 12 | Blackout at VCC | CAPSTONE |
-
-Later-week material may exist in the repositories before release. Presence of a file is not authorisation to run that scenario.
-
-## Communication
-
-- **GitHub:** official assignments, submissions, evidence and mentor review.
-- **Slack:** working discussions and mentor support.
-- **WhatsApp:** urgent reminders/timetable notices only.
+**Toolkit:** Learn + Connect + Operate  
+**VCC:** scheduled five-pod isolated training target  
+**Central Assignments:** submissions + assessment

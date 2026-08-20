@@ -1,0 +1,89 @@
+name: Validate Grey-Box Toolkit
+
+on:
+  pull_request:
+  push:
+    branches: [main, codex/foundation-toolkit]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate Python, Node and shell syntax
+        run: |
+          python -m py_compile scripts/validate_target.py tools/neolabs.py
+          bash -n scripts/safe-nmap.sh
+          node --check labs/local-access-control/app/server.mjs
+
+      - name: Validate installed NeoLabs command
+        run: |
+          python -m pip install --disable-pip-version-check --no-deps -e .
+          neolabs --help >/dev/null
+          neolabs pod --help >/dev/null
+
+      - name: Test broker-manifest target guard
+        run: |
+          mkdir -p runtime
+          cat > runtime/access-manifest.json <<'JSON'
+          {
+            "pod_id": "pod-03",
+            "track": "PENTEST",
+            "scenario_id": "ci-ghost-login",
+            "resources": {
+              "targets": [
+                {"label": "VCC Web", "hostname": "pod03.lab.example.invalid", "ip": "10.40.3.21", "ports": [80, 443]}
+              ],
+              "allowed_cidrs": ["10.40.3.16/28"],
+              "prohibited": ["anything outside the returned scope"]
+            }
+          }
+          JSON
+
+          python scripts/validate_target.py pod03.lab.example.invalid
+          python scripts/validate_target.py 10.40.3.21
+          python scripts/validate_target.py 10.40.3.22
+          python scripts/validate_target.py 10.40.3.16/28
+
+          if python scripts/validate_target.py '*'; then
+            echo 'Wildcard target was incorrectly accepted.' >&2
+            exit 1
+          fi
+          if python scripts/validate_target.py 8.8.8.8; then
+            echo 'Out-of-scope public IP was incorrectly accepted.' >&2
+            exit 1
+          fi
+          if python scripts/validate_target.py 10.40.4.0/28; then
+            echo 'Unpublished CIDR was incorrectly accepted.' >&2
+            exit 1
+          fi
+          rm -rf runtime
+
+      - name: Validate local practice target
+        run: |
+          docker compose -f labs/local-access-control/docker-compose.yml config -q
+          grep -F '127.0.0.1:8088:3000' labs/local-access-control/docker-compose.yml
+          if grep -RInE 'privileged:[[:space:]]*true|network_mode:[[:space:]]*host|cap_add:' labs/local-access-control; then
+            echo 'Local practice target requests an unsafe container capability.' >&2
+            exit 1
+          fi
+          docker build -q labs/local-access-control/app >/dev/null
+
+      - name: Check repository safety boundary
+        run: |
+          if grep -RInE --exclude-dir=.git 'BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY' .; then
+            echo 'Private key material must not be committed.' >&2
+            exit 1
+          fi
+          if find . -type f \( -name '*.burp' -o -name 'authorized-target.env' -o -name '*.pem' -o -name '*.key' \) -print | grep -q .; then
+            echo 'Live project, target or credential material is not allowed.' >&2
+            exit 1
+          fi
