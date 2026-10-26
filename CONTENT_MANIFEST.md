@@ -2,6 +2,7 @@
 
 | Material | Contents | Current status |
 |---|---|---|
+| Week 4 Broken Gate assignments | `assignments/week-04/`; individual SOC, headless Pentest and Support briefs with sanitized report templates; root assignment link audited | Draft; `w04-broken-gate`, version 1.0.0, reviewed 2026-10-26; mentor publication and final deadline/rubric pending |
 | Professional Foundations Manual | authorisation, scope, ethics, proof thresholds, evidence and escalation | Current |
 | HTTP and Web Foundations | requests, responses, cookies, sessions, browser storage, JSON and APIs | Current |
 | Burp Community Guide | proxy, exact scope, HTTP history, Repeater, Decoder, Comparer and evidence workflow | Current; screenshots may evolve with Burp UI |
