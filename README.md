@@ -1,5 +1,13 @@
 # NeoLabs Grey-Box Penetration Testing Intern Toolkit
 
+## Week 4 assignments (staged)
+
+The [Week 4 assignment hub](assignments/week-04/README.md) links the SOC, Pentest
+and IT Security Support briefs, report requirements and submission instructions.
+The current server-issued assignment controls availability; staged documents do
+not authorize testing. Use each track toolkit's Week 4 guide for its startup and
+task commands. Final deadlines and rubric approval come from your assigned Issue.
+
 The **NeoLabs × RIL Grey-Box Pentest Toolkit** is the student-side **Learn + Connect + Operate** repository for authorised VCC training.
 
 > **Current assignment:** Week 01 — Operation Night Watch.  
