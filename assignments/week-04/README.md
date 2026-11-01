@@ -1,5 +1,8 @@
 # Week 4 — Broken Gate: Authorization and Entitlements
 
+**Student submission instructions:** [All-track Week 4 submission handbook (exact Git commands, evidence files, branch/PR layout)](SUBMISSION_HANDBOOK.md).
+
+
 Scenario: `w04-broken-gate`. Version 1.0.0; reviewed 2026-10-23.
 Status: draft assignment pack; not a release announcement. Begin only when the mentor publishes this scenario for your assigned track/pod. Deadline and final rubric: programme lead / assigned Issue; not set by this pack.
 
