@@ -8,32 +8,38 @@ Investigate a harmless suspicious upload identified by Pentest/SOC, preserve pre
 
 ## Student onboarding (AFTER mentor publishes W05 Support access)
 
-The mentor must authorize and enroll your separate Week 05 **public** SSH key on the new W05 host. From your IT Security Support toolkit root, on the device that will own the SSH localhost tunnel:
+From your **current IT Security Support toolkit** root, use exactly the
+original two NeoLabs broker commands:
 
 ```bash
-bash neolabs incident keygen
-```
-
-Provide the displayed **public** key only to the mentor privately. Keep the private key, NeoLabs Access Code and session tokens secret. Key generation by itself does NOT authorize access.
-
-When the existing broker publishes your Week 05 assigned pod, Support role, restricted W05 SSH username and approved window:
-
-```bash
-bash neolabs login
-bash neolabs status
-bash neolabs targets
+bash neolabs login --pod XX
 bash neolabs connect
 ```
 
-Keep the `connect` terminal open. On the machine owning the tunnel, run:
+Replace `XX` with the pod number assigned by the mentor. Enter only your
+existing NeoLabs Access Code when asked. **Do not generate a key manually,
+paste or send a public key, use scp, or create any SSH account yourself.**
+
+`connect` automatically creates/reuses an Ed25519 identity on your own device,
+registers its **public key only** with the authenticated central broker,
+waits for the server's restricted SSH enrollment service, verifies the broker
+published SSH host-key pin and opens the scoped localhost tunnel. The private
+key never leaves your laptop. Keep the tunnel terminal open.
+
+From another terminal on the **same device**, run:
 
 ```bash
 bash neolabs incident dashboard
 ```
 
-The official Support desk opens at `http://127.0.0.1:18080/support` via the existing-broker one-time handoff. Wrong pod, Week 4-only broker manifest, an unregistered W05 Support SSH key or missing official approval must fail closed.
+The authorized Support desk opens at
+`http://127.0.0.1:18080/support`. The broker must publish the assigned
+Support pod and current Week 05 scenario. Wrong pod/track, expired session or
+missing authorization fail closed; contact the mentor rather than bypassing.
 
-**Mentor preview only:** `bash neolabs incident dashboard --mentor-preview` uses the separate approved 18600 tunnel and private mentor test code; it is **not** for student distribution.
+**Mentor preview only:** `bash neolabs incident dashboard --mentor-preview`
+is not part of the student workflow. No standalone mentor test codes are
+distributed to interns.
 
 ## Authorized incident workflow
 
