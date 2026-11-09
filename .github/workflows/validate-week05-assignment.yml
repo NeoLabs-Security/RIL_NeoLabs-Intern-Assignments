@@ -37,7 +37,11 @@ jobs:
           soc=(root/"soc.md").read_text()
           for rule in ("100190","100191","100192","100193"):
               assert rule in soc, "Missing SOC rule "+rule
-          assert "incident keygen" in (root/"support.md").read_text()
+          support=(root/"support.md").read_text()
+assert "bash neolabs login --pod XX" in support
+assert "bash neolabs connect" in support
+assert "automatically" in support.lower()
+assert "incident keygen" not in support
           assert "upload dashboard" in (root/"pentest.md").read_text()
           readme=(root/"README.md").read_text()
           assert "DRAFT" in readme and "broker" in readme
