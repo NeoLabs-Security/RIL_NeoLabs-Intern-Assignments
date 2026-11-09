@@ -1,6 +1,6 @@
 # Week 05 — Operation Poisoned Upload
 
-**Scenario:** `w05-poisoned-upload` · **Runtime:** separate W05 VCC gateway, five isolated upload pods, existing central Wazuh SOC · **Status:** **DRAFT — no student authorization until the existing broker publishes Week 05**.
+**Scenario:** `w05-poisoned-upload` · **Runtime:** separate W05 VCC gateway, five isolated upload pods, existing central Wazuh SOC · **Status:** **LIVE since 9 November 2026.** The broker reports `STUDENT_READY`/`INTERACTIVE_TEST`; each intern still requires an authorized scenario, track, pod and valid access code.
 
 ## Scenario
 
@@ -18,18 +18,21 @@ The exercise is collaborative, **not competitive**:
 - [Submission Handbook](SUBMISSION_HANDBOOK.md)
 - [Evidence-ready templates](templates/)
 
-Each guide gives the **actual available student-toolkit commands**, expected harmless fixture behavior and precise file submission paths. These instructions are **conditional on official publication**, not permission to begin testing.
+Each guide gives the **actual available student-toolkit commands**, expected harmless fixture behavior and precise file submission paths. Week 05 is published. Only the individually authorized track, pod and current broker window are in scope.
 
-## Mentor must approve before publication
+## Published assignment Issues
 
-1. Existing Week 4 access, five pods and indexed Wazuh telemetry remain operational; do not overwrite its current release pointer without approved weekly transition/additive capability.
-2. The central NeoLabs broker must publish the correct Week 5 **student-ready** scenario, pod, track, allowed window and exact restricted SSH resources for all affected students. **Week 4-only credentials/manifests are insufficient**.
-3. The operator must deploy the central broker's Week 05 automatic SSH enrollment endpoint and root-owned synchronizer. After `bash neolabs login`, each Pentest/Support intern's `bash neolabs connect` enrolls their **public** key automatically on the VCC host. SSH remains no-shell and limited to its loopback gateway. Private student keys remain local.
-4. Pentest/Support client access must fail closed when scope, pod, role, time window or gateway target is wrong; SOC must validate the assigned Wazuh view and original event-ID indexing.
-5. Fixed/vulnerable tests (201/201/415 vs 201/415/415) must pass, and the approved Support quarantine must generate a centrally indexed rule 100193 event.
-6. Mentor supplies a Week 05 assignment Issue, incident reference, cohort **due date**, grading rubric and student announcements. No due date or release is invented by this draft.
+- [Pentesting Issue #35](https://github.com/NeoLabs-Security/RIL_NeoLabs-Intern-Assignments/issues/35)
+- [SOC Level 1 Issue #36](https://github.com/NeoLabs-Security/RIL_NeoLabs-Intern-Assignments/issues/36)
+- [IT Security & Support Issue #37](https://github.com/NeoLabs-Security/RIL_NeoLabs-Intern-Assignments/issues/37)
 
-The complete mentor gateway/checklist is in the VCC runtime branch's `docs/operator/W05_STUDENT_RELEASE_GATE.md`.
+The Week 05 lab has been deployed and tested, and the NeoLabs broker's restricted automatic SSH enrollment for Pentesting and Support is active. The SOC local Wazuh and Week 05 telemetry validation are also tested. The three tracks were notified privately on 9 November 2026.
+
+**Access codes:** The codes supplied in the launch emails authorize **Pod 01 for the corresponding track only**. They do not grant other pods or tracks. The distributed Pod 01 codes expire **16 November 2026, 06:00 UTC (7:00 AM WAT)**. This is a **credential expiry, not the assignment due date**. Students assigned to a different pod must obtain their own authorized credential privately; no secrets belong in public Issues or GitHub commits.
+
+**Pending mentor decisions:** Post the exact assignment due date in each Issue, approve each specific Support quarantine incident (format `INC-W05-...`) and authorize the fixed-release retest window. Do not assume a fixed release or a valid-looking incident reference is approved. Testing is limited to the broker-issued pod and active window.
+
+Pentesting and Support use the restricted local SSH forward on `127.0.0.1:18080`, with no manual SSH key enrollment. SOC uses its own local Wazuh workstation and may additionally use a separately authorized central Wazuh dashboard. Preserve other lab services; do not change the VCC release or another pod.
 
 ## Scope and safety
 
