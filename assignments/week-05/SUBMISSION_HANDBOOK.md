@@ -1,6 +1,6 @@
-# Week 05 — Submission Handbook (draft; mentor release required)
+# Week 05 — Submission Handbook (published)
 
-**Scenario:** `w05-poisoned-upload` · **Activity:** Operation Poisoned Upload · **Status:** not published until all student access gates pass.
+**Scenario:** `w05-poisoned-upload` · **Activity:** Operation Poisoned Upload · **Status:** published 9 November 2026; students must use individually authorized broker-issued track/pod scope.
 
 ## Repository submission path and branches
 
@@ -39,7 +39,7 @@ Include only sanitized and relevant screenshots, preferably in a local `evidence
 
 ### PR procedure
 
-After the mentor publishes Week 05 and your approved Issue:
+After receiving your private Week 05 track-specific login instructions and confirming your currently approved pod:
 1. Pull the latest assignment repository `main` branch and create your **own** correctly named Week 05 branch.
 2. Create `submissions/week-05/<track>/<github-username>/`.
 3. Copy the correct two starter templates into that folder and fill all required sections using **your own assigned pod evidence**.
@@ -47,7 +47,7 @@ After the mentor publishes Week 05 and your approved Issue:
 5. Commit the sanitized files. Open a Pull Request **into main**, reference the assigned mentor Issue, and **leave it open** for assessment.
 6. The mentor, not the intern, decides whether to merge.
 
-**No student should merge or run release/publisher commands.** The due date, grading weights, incident owner and final approval come from the individual Week 05 mentor Issue; none are assumed here.
+**No student should merge or run release/publisher commands.** Official Issues: [Pentesting #35](https://github.com/NeoLabs-Security/RIL_NeoLabs-Intern-Assignments/issues/35), [SOC #36](https://github.com/NeoLabs-Security/RIL_NeoLabs-Intern-Assignments/issues/36) and [IT Security & Support #37](https://github.com/NeoLabs-Security/RIL_NeoLabs-Intern-Assignments/issues/37). The mentor will post the actual submission deadline there. The distributed Pod 01 codes expire **16 November 2026, 7:00 AM WAT**; this is a **credential expiration, not a submission deadline**. Quarantine and fixed-release retests require separate mentor approval.
 
 ## Coordinated scenario and evidence expectations
 
@@ -55,12 +55,12 @@ After the mentor publishes Week 05 and your approved Issue:
 - **SOC:** confirm central-indexed Wazuh rules 100190 (legitimate PNG), 100191 (vulnerable accepted mismatch), 100192 (rejection) and 100193 (approved Support quarantine), in the correct pod. A higher-severity rule may supersede a baseline rule on the same event; report accurately.
 - **Support:** verify source mismatch, SHA-256, upload ID, preserve pre-change evidence, obtain mentor approval, quarantine one exact synthetic artifact, record the **new** containment event ID and independently obtain SOC's 100193 index confirmation. The Student Support Desk is authorized only when published by the existing broker.
 
-Do **not** quarantine or restore arbitrary files, attach synthetic upload binaries or claim that existing W04 access codes authorize W05 before official broker publication.
+Do **not** quarantine or restore arbitrary files, attach synthetic upload binaries or assume W04-only credentials authorize W05. Each student must verify the currently published Week 05 broker track and assigned pod. Private Pod 01 codes are not transferable to other pods and must never appear in public Issues, submissions or commits.
 
 ## Minimum local review checklist
 
 Before opening a PR, check:
-- Correct `submissions/week-05/<track>/<username>/` path and approved Week 05 Issue.
+- Correct `submissions/week-05/<track>/<username>/` path and official Week 05 track Issue (#35 Pentesting, #36 SOC, #37 Support).
 - Both required Markdown documents present and contain no unfilled placeholders.
 - Consistent exact pod, scenario, incident reference and UTC times across documents.
 - Distinct original-upload and quarantine event IDs when containment happened.

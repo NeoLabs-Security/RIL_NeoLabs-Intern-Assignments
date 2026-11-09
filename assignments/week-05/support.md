@@ -1,12 +1,12 @@
 # Week 05 — IT Security & Support: Operation Poisoned Upload
 
-**Status:** draft until the NeoLabs broker publishes Support `STUDENT_READY` Week 05 resources. **Scenario:** `w05-poisoned-upload`. One assigned pod only.
+**Status:** published 9 November 2026; a broker-issued Support `STUDENT_READY` assignment for your exact pod remains required. **Scenario:** `w05-poisoned-upload`. One assigned pod only.
 
 ## Mission
 
 Investigate a harmless suspicious upload identified by Pentest/SOC, preserve pre-change evidence, obtain incident-owner approval, quarantine the exact synthetic artifact, verify SOC's containment alert, and document recovery/retest.
 
-## Student onboarding (AFTER mentor publishes W05 Support access)
+## Student onboarding — approved Week 05 access
 
 From your **current IT Security Support toolkit** root, use exactly the
 original two NeoLabs broker commands:
@@ -38,8 +38,7 @@ Support pod and current Week 05 scenario. Wrong pod/track, expired session or
 missing authorization fail closed; contact the mentor rather than bypassing.
 
 **Mentor preview only:** `bash neolabs incident dashboard --mentor-preview`
-is not part of the student workflow. No standalone mentor test codes are
-distributed to interns.
+is not part of the student workflow. A private Support Pod 01 code has been distributed by track email; it does not authorize a different pod. No mentor-preview code is distributed to interns.
 
 ## Authorized incident workflow
 
@@ -61,4 +60,4 @@ Use branch `week-05/support/<github-username>-poisoned-upload` and folder `submi
 
 Report the approved change record, source and containment event IDs, observed state, indexed SOC rule `100193` (or honestly mark not verified), fixed-release business-continuity checks, limitations, communications and escalation. Leave the PR open for mentor review.
 
-No due date, grading weight or access authorization is implied by this draft. Mentor Issue and `SUBMISSION_HANDBOOK.md` are authoritative.
+**Official assignment: [IT Security & Support Issue #37](https://github.com/NeoLabs-Security/RIL_NeoLabs-Intern-Assignments/issues/37).** Mentor will announce the due date there. `SUBMISSION_HANDBOOK.md` governs submissions.

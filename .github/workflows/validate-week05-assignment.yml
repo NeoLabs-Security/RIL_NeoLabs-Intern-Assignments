@@ -38,12 +38,20 @@ jobs:
           for rule in ("100190","100191","100192","100193"):
               assert rule in soc, "Missing SOC rule "+rule
           support=(root/"support.md").read_text()
-assert "bash neolabs login --pod XX" in support
-assert "bash neolabs connect" in support
-assert "automatically" in support.lower()
-assert "incident keygen" not in support
+          assert "bash neolabs login --pod XX" in support
+          assert "bash neolabs connect" in support
+          assert "automatically" in support.lower()
+          assert "incident keygen" not in support
           assert "upload dashboard" in (root/"pentest.md").read_text()
           readme=(root/"README.md").read_text()
-          assert "DRAFT" in readme and "broker" in readme
-          print("PASS: Week 05 role workflow, readiness disclaimer, templates, SOC rules and submission paths")
+          assert "LIVE" in readme and "broker" in readme
+          assert "DRAFT" not in readme
+          for number in ("35", "36", "37"):
+              assert "issues/" + number in readme
+          for key in ("README.md","pentest.md","soc.md","support.md","SUBMISSION_HANDBOOK.md"):
+              body=(root/key).read_text(encoding="utf-8")
+              assert "DRAFT" not in body and "not published" not in body
+              import re
+              assert not re.search(r"NL-[A-Za-z0-9_-]{12,}",body), "Access code leaked in "+key
+          print("PASS: Week 05 published issues, track scope, no leaked codes, templates and submissions")
           PY
