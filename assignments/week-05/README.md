@@ -24,7 +24,7 @@ Each guide gives the **actual available student-toolkit commands**, expected har
 
 1. Existing Week 4 access, five pods and indexed Wazuh telemetry remain operational; do not overwrite its current release pointer without approved weekly transition/additive capability.
 2. The central NeoLabs broker must publish the correct Week 5 **student-ready** scenario, pod, track, allowed window and exact restricted SSH resources for all affected students. **Week 4-only credentials/manifests are insufficient**.
-3. Student Pentest and Support SSH public keys must be enrolled on the **separate** Week 5 server, with no shell and forwarding limited to its loopback gateway. Student keys are not the mentor-only host-to-host SOC tunnel key.
+3. The operator must deploy the central broker's Week 05 automatic SSH enrollment endpoint and root-owned synchronizer. After `bash neolabs login`, each Pentest/Support intern's `bash neolabs connect` enrolls their **public** key automatically on the VCC host. SSH remains no-shell and limited to its loopback gateway. Private student keys remain local.
 4. Pentest/Support client access must fail closed when scope, pod, role, time window or gateway target is wrong; SOC must validate the assigned Wazuh view and original event-ID indexing.
 5. Fixed/vulnerable tests (201/201/415 vs 201/415/415) must pass, and the approved Support quarantine must generate a centrally indexed rule 100193 event.
 6. Mentor supplies a Week 05 assignment Issue, incident reference, cohort **due date**, grading rubric and student announcements. No due date or release is invented by this draft.
