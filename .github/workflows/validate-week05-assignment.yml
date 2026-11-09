@@ -1,0 +1,49 @@
+name: Validate Week 05 assignment pack
+on:
+  pull_request:
+    paths:
+      - 'assignments/week-05/**'
+      - '.github/workflows/validate-week05-assignment.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  week05-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify three-track assignment pages and evidence templates
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          root=Path("assignments/week-05")
+          required=[
+            "README.md","SUBMISSION_HANDBOOK.md","pentest.md","soc.md","support.md",
+            "templates/pentest-finding.md","templates/soc-incident-report.md",
+            "templates/support-ticket-resolution.md","templates/evidence-register.md",
+          ]
+          for rel in required:
+              path=root/rel
+              assert path.is_file() and path.stat().st_size>300, "Missing/incomplete: "+rel
+              body=path.read_text(encoding="utf-8")
+              assert "w05-poisoned-upload" in body or rel.startswith("templates/") and "Week 05" in body, rel
+          handbook=(root/"SUBMISSION_HANDBOOK.md").read_text(encoding="utf-8")
+          for track in ("pentest","soc","support"):
+              assert f"submissions/week-05/<track>" in handbook, track
+              guide=(root/f"{track}.md").read_text(encoding="utf-8")
+              assert "mentor" in guide.lower() and "submission" in guide.lower(), track
+              assert "neolabs" in guide.lower() or track=="soc", track
+          soc=(root/"soc.md").read_text()
+          for rule in ("100190","100191","100192","100193"):
+              assert rule in soc, "Missing SOC rule "+rule
+          support=(root/"support.md").read_text()
+assert "bash neolabs login --pod XX" in support
+assert "bash neolabs connect" in support
+assert "automatically" in support.lower()
+assert "incident keygen" not in support
+          assert "upload dashboard" in (root/"pentest.md").read_text()
+          readme=(root/"README.md").read_text()
+          assert "DRAFT" in readme and "broker" in readme
+          print("PASS: Week 05 role workflow, readiness disclaimer, templates, SOC rules and submission paths")
+          PY
